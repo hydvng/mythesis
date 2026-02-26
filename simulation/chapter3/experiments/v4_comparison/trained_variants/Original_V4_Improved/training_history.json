@@ -1,0 +1,34 @@
+{
+  "variant_name": "Original_V4_Improved",
+  "variant_config": {
+    "diverge_threshold": 0.5,
+    "warning_threshold": 0.4,
+    "warning_penalty": 5.0
+  },
+  "start_time": "2026-02-24T10:26:54.919650",
+  "end_time": "2026-02-24T15:44:01.821704",
+  "total_time": 19026.370439767838,
+  "stages": [
+    {
+      "stage_name": "Stage1",
+      "best_reward": -357.5212660509499,
+      "best_episode": 18,
+      "total_episodes": 200,
+      "total_time": 3235.9013426303864
+    },
+    {
+      "stage_name": "Stage2",
+      "best_reward": -811.2413208677091,
+      "best_episode": 4,
+      "total_episodes": 250,
+      "total_time": 6038.37742805481
+    },
+    {
+      "stage_name": "Stage3",
+      "best_reward": -1527.8021998453585,
+      "best_episode": 36,
+      "total_episodes": 300,
+      "total_time": 9752.047048807144
+    }
+  ]
+}

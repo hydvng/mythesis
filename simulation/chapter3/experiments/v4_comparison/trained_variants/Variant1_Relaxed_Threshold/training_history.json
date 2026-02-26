@@ -1,0 +1,34 @@
+{
+  "variant_name": "Variant1_Relaxed_Threshold",
+  "variant_config": {
+    "diverge_threshold": 1.0,
+    "warning_threshold": 0.4,
+    "warning_penalty": 5.0
+  },
+  "start_time": "2026-02-24T15:44:01.823480",
+  "end_time": "2026-02-24T21:01:39.294224",
+  "total_time": 19057.4497487545,
+  "stages": [
+    {
+      "stage_name": "Stage1",
+      "best_reward": -481.9700938573551,
+      "best_episode": 23,
+      "total_episodes": 200,
+      "total_time": 3269.7094972133636
+    },
+    {
+      "stage_name": "Stage2",
+      "best_reward": -732.9353588931056,
+      "best_episode": 9,
+      "total_episodes": 250,
+      "total_time": 6071.491899490356
+    },
+    {
+      "stage_name": "Stage3",
+      "best_reward": -1166.2549163502738,
+      "best_episode": 22,
+      "total_episodes": 300,
+      "total_time": 9716.205621480942
+    }
+  ]
+}

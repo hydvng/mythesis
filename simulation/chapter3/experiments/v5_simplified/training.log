@@ -1,0 +1,888 @@
+
+======================================================================
+V5 Simplified 训练开始
+======================================================================
+配置: {'episode_length': 30, 'max_episodes': 400, 'Hs': 2.0, 'T1': 8.0, 'q_des_type': 'sinusoidal', 'lr_actor': 0.0001, 'lr_critic': 0.0003}
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+V4SAC Network Info:
+  Actor parameters: 605,958
+  Critic parameters: 607,745
+  Total parameters: 1,821,448
+  Gamma: 0.995, Tau: 0.002, GradClip: 0.5
+设备: cuda
+状态维度: 9, 动作维度: 3
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 0: 新最佳! Reward=-18.70, ISE=0.187022
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 3: 新最佳! Reward=-18.53, ISE=0.185298
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 8: 新最佳! Reward=-11.70, ISE=0.116962
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 12: 新最佳! Reward=-8.16, ISE=0.081585
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 13: 新最佳! Reward=-4.70, ISE=0.047045
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 14: 新最佳! Reward=-3.83, ISE=0.038276
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 15: 新最佳! Reward=-3.71, ISE=0.037099
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 19: 新最佳! Reward=-2.05, ISE=0.020470
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 20: 新最佳! Reward=-1.49, ISE=0.014881
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 48: 新最佳! Reward=-1.48, ISE=0.014764
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 49: 新最佳! Reward=-1.21, ISE=0.012107
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 50: Reward=-1.58, ISE=0.015787, Best=-1.21
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 53: 新最佳! Reward=-1.06, ISE=0.010589
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 57: 新最佳! Reward=-0.99, ISE=0.009857
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 61: 新最佳! Reward=-0.95, ISE=0.009489
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 62: 新最佳! Reward=-0.86, ISE=0.008593
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 64: 新最佳! Reward=-0.80, ISE=0.008043
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 65: 新最佳! Reward=-0.74, ISE=0.007394
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 68: 新最佳! Reward=-0.70, ISE=0.006972
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 69: 新最佳! Reward=-0.68, ISE=0.006808
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 70: 新最佳! Reward=-0.68, ISE=0.006777
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 72: 新最佳! Reward=-0.67, ISE=0.006749
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 75: 新最佳! Reward=-0.55, ISE=0.005548
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 77: 新最佳! Reward=-0.49, ISE=0.004903
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 83: 新最佳! Reward=-0.47, ISE=0.004739
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 84: 新最佳! Reward=-0.42, ISE=0.004164
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 85: 新最佳! Reward=-0.38, ISE=0.003834
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 87: 新最佳! Reward=-0.35, ISE=0.003514
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 98: 新最佳! Reward=-0.34, ISE=0.003439
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 100: Reward=-0.41, ISE=0.004124, Best=-0.34
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 102: 新最佳! Reward=-0.32, ISE=0.003218
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 103: 新最佳! Reward=-0.29, ISE=0.002860
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 104: 新最佳! Reward=-0.28, ISE=0.002784
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 107: 新最佳! Reward=-0.25, ISE=0.002507
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 111: 新最佳! Reward=-0.20, ISE=0.001960
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 116: 新最佳! Reward=-0.16, ISE=0.001646
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 124: 新最佳! Reward=-0.14, ISE=0.001441
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 133: 新最佳! Reward=-0.14, ISE=0.001424
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 134: 新最佳! Reward=-0.14, ISE=0.001360
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 136: 新最佳! Reward=-0.13, ISE=0.001303
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 141: 新最佳! Reward=-0.11, ISE=0.001102
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 148: 新最佳! Reward=-0.10, ISE=0.001038
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 149: 新最佳! Reward=-0.10, ISE=0.001020
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 150: 新最佳! Reward=-0.10, ISE=0.001015
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 151: 新最佳! Reward=-0.09, ISE=0.000926
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 159: 新最佳! Reward=-0.08, ISE=0.000846
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 180: 新最佳! Reward=-0.08, ISE=0.000828
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 184: 新最佳! Reward=-0.08, ISE=0.000809
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 200: Reward=-0.10, ISE=0.001006, Best=-0.08
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 204: 新最佳! Reward=-0.06, ISE=0.000608
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 208: 新最佳! Reward=-0.06, ISE=0.000591
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 250: Reward=-0.12, ISE=0.001163, Best=-0.06
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 253: 新最佳! Reward=-0.05, ISE=0.000472
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 300: Reward=-0.07, ISE=0.000727, Best=-0.05
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 314: 新最佳! Reward=-0.05, ISE=0.000469
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 322: 新最佳! Reward=-0.05, ISE=0.000460
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 344: 新最佳! Reward=-0.05, ISE=0.000455
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 349: 新最佳! Reward=-0.03, ISE=0.000276
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 350: Reward=-0.04, ISE=0.000403, Best=-0.03
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 367: 新最佳! Reward=-0.03, ISE=0.000254
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 371: 新最佳! Reward=-0.02, ISE=0.000226
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+Episode 394: 新最佳! Reward=-0.02, ISE=0.000225
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+
+训练完成!
+最佳Reward: -0.02 (Episode 394)
+总时间: 161.2分钟
+
+模型保存在: /home/haydn/Documents/AERAOFMINE/mythesis/simulation/chapter3/experiments/v5_simplified/v5_simplified_training
+训练历史: /home/haydn/Documents/AERAOFMINE/mythesis/simulation/chapter3/experiments/v5_simplified/v5_simplified_training/training_history.json
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+
+

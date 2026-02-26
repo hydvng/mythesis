@@ -1,0 +1,68 @@
+======================================================================
+V4 Improved变体对比报告
+======================================================================
+
+
+场景: Easy_20s
+----------------------------------------------------------------------
+变体                             轨迹                   ISE/step        Std       
+----------------------------------------------------------------------
+Baseline_V4_Optimized          constant             0.000001        0.000001  
+Baseline_V4_Optimized          sinusoidal           0.000882        0.000312  
+Baseline_V4_Optimized          sinusoidal_small     0.000459        0.000067  
+Original_V4_Improved           constant             0.000001        0.000000  
+Original_V4_Improved           sinusoidal           0.000933        0.000267  
+Original_V4_Improved           sinusoidal_small     0.000457        0.000063  
+Variant1_Relaxed               constant             0.000001        0.000000  
+Variant1_Relaxed               sinusoidal           0.001244        0.000064  
+Variant1_Relaxed               sinusoidal_small     0.000795        0.000080  
+
+
+场景: Medium_30s
+----------------------------------------------------------------------
+变体                             轨迹                   ISE/step        Std       
+----------------------------------------------------------------------
+Baseline_V4_Optimized          constant             0.000001        0.000000  
+Baseline_V4_Optimized          sinusoidal           0.000933        0.000279  
+Baseline_V4_Optimized          sinusoidal_small     0.000447        0.000059  
+Original_V4_Improved           constant             0.000001        0.000000  
+Original_V4_Improved           sinusoidal           0.000929        0.000268  
+Original_V4_Improved           sinusoidal_small     0.000471        0.000063  
+Variant1_Relaxed               constant             0.000001        0.000000  
+Variant1_Relaxed               sinusoidal           0.001287        0.000044  
+Variant1_Relaxed               sinusoidal_small     0.000774        0.000056  
+
+
+场景: Hard_40s
+----------------------------------------------------------------------
+变体                             轨迹                   ISE/step        Std       
+----------------------------------------------------------------------
+Baseline_V4_Optimized          constant             0.000001        0.000000  
+Baseline_V4_Optimized          sinusoidal           0.000930        0.000271  
+Baseline_V4_Optimized          sinusoidal_small     0.000446        0.000066  
+Original_V4_Improved           constant             0.000001        0.000000  
+Original_V4_Improved           sinusoidal           0.000938        0.000275  
+Original_V4_Improved           sinusoidal_small     0.000463        0.000083  
+Variant1_Relaxed               constant             0.000001        0.000000  
+Variant1_Relaxed               sinusoidal           0.001292        0.000033  
+Variant1_Relaxed               sinusoidal_small     0.000776        0.000009  
+
+
+======================================================================
+最佳性能分析
+======================================================================
+
+Easy_20s:
+  constant: Variant1_Relaxed (ISE/step: 0.000001)
+  sinusoidal: Baseline_V4_Optimized (ISE/step: 0.000882)
+  sinusoidal_small: Original_V4_Improved (ISE/step: 0.000457)
+
+Medium_30s:
+  constant: Original_V4_Improved (ISE/step: 0.000001)
+  sinusoidal: Original_V4_Improved (ISE/step: 0.000929)
+  sinusoidal_small: Baseline_V4_Optimized (ISE/step: 0.000447)
+
+Hard_40s:
+  constant: Variant1_Relaxed (ISE/step: 0.000001)
+  sinusoidal: Baseline_V4_Optimized (ISE/step: 0.000930)
+  sinusoidal_small: Baseline_V4_Optimized (ISE/step: 0.000446)

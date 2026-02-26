@@ -1,0 +1,887 @@
+%% 
+%% Copyright 2007-2024 Elsevier Ltd
+%% 
+%% This file is part of the 'Elsarticle Bundle'.
+%% ---------------------------------------------
+%% 
+%% It may be distributed under the conditions of the LaTeX Project Public
+%% License, either version 1.3 of this license or (at your option) any
+%% later version.  The latest version of this license is in
+%%    http://www.latex-project.org/lppl.txt
+%% and version 1.3 or later is part of all distributions of LaTeX
+%% version 1999/12/01 or later.
+%% 
+%% The list of all files belonging to the 'Elsarticle Bundle' is
+%% given in the file `manifest.txt'.
+%% 
+%% Template article for Elsevier's document class `elsarticle'
+%% with harvard style bibliographic references
+
+\documentclass[preprint,12pt]{elsarticle}
+
+%% Use the option review to obtain double line spacing
+% \documentclass[preprint,review,12pt]{elsarticle}
+
+%% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; or 5p,twocolumn
+%% for a journal layout:
+% \documentclass[final,1p,times]{elsarticle}
+% \documentclass[final,1p,times,twocolumn]{elsarticle}
+%% \documentclass[final,3p,times]{elsarticle}
+% \documentclass[final,3p,times,twocolumn]{elsarticle}
+%% \documentclass[final,5p,times]{elsarticle}
+% \documentclass[final,5p,times,twocolumn]{elsarticle}
+
+%% For including figures, graphicx.sty has been loaded in
+%% elsarticle.cls. If you prefer to use the old commands
+%% please give \usepackage{epsfig}
+
+%% The amssymb package provides various useful mathematical symbols
+\usepackage{amssymb}
+%% The amsmath package provides various useful equation environments.
+\usepackage{amsmath}
+%% The amsthm package provides extended theorem environments
+\usepackage{amsthm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{booktabs}  % 专业表格线
+\usepackage{tabularx} % 自动调整列宽
+\usepackage{multirow} % 跨行合并单元格
+%% The lineno packages adds line numbers. Start line numbering with
+%% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
+%% for the whole article with \linenumbers.
+%% \usepackage{lineno}
+\usepackage{soul, color, xcolor}
+\sethlcolor{yellow}
+\soulregister{\cite}7 % 注册\cite命令
+\soulregister{\citep}7 % 注册\citep命令
+\soulregister{\citet}7 % 注册\citet命令
+\soulregister{\ref}7 % 注册\ref命令
+\soulregister{\pageref}7 % 注册\pageref命令
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newdefinition{rmk}{Remark}
+\newproof{proof}{Proof}
+
+\journal{Journal of the Franklin Institute}
+
+\begin{document}
+
+\begin{frontmatter}
+
+%% Title, authors and addresses
+
+%% use the tnoteref command within \title for footnotes;
+%% use the tnotetext command for theassociated footnote;
+%% use the fnref command within \author or \affiliation for footnotes;
+%% use the fntext command for theassociated footnote;
+%% use the corref command within \author for corresponding author footnotes;
+%% use the cortext command for theassociated footnote;
+%% use the ead command for the email address,
+%% and the form \ead[url] for the home page:
+%% \title{Title\tnoteref{label1}}
+%% \tnotetext[label1]{}
+%% \author{Name\corref{cor1}\fnref{label2}}
+%% \ead{email address}
+%% \ead[url]{home page}
+%% \fntext[label2]{}
+%% \cortext[cor1]{}
+%% \affiliation{organization={},
+%%             addressline={},
+%%             city={},
+%%             postcode={},
+%%             state={},
+%%             country={}}
+%% \fntext[label3]{}
+
+\title{Dynamic Input Safety Set-Based Robust Adaptive Deep Reinforcement Learning Control for Trajectory Tracking of Nonlinear Systems} %% Article title
+
+\author[1]{Heiding Zhang}
+\ead{Zhangheiding@dlmu.edu.cn}
+% \credit{Writing-original draft, Conceptualization, Methodology, Software.}
+\affiliation[1]{organization={School of Marine Engineering,Dalian Maritime University},
+postcode={116026}, 
+city={Dalian},
+country={China}}
+
+\author[2]{Jialu Du\corref{cor1}}
+\cortext[cor1]{Corresponding author}
+\ead{dujl@dlmu.edu.cn}
+% \credit{Writing-review & editing, Supervision, Methodology.}
+\affiliation[2]{organization={School of Marine Electrical Engineering,Dalian Maritime University},
+                postcode={116026}, 
+                city={Dalian},
+                country={China}}
+
+\author[2]{Ze Lin}
+% \credit{Writing-review & editing, Formal Analysis.}
+
+%% Abstract
+\begin{abstract}
+    %This paper introduces a Dynamic Input Safety Set-Based Robust Adaptive Deep Reinforcement Learning Control (DRARLC) framework aimed at optimizing the trajectory tracking performance of continuous nonlinear systems across scenarios with known and unknown models using deep reinforcement learning. Additionally, it effectively addresses potential violations of system safety constraints that may arise from the exploratory strategies inherent in deep reinforcement learning. A Dynamic Input Safety Set (DISS) generation algorithm is proposed, based on output constraint transformations, to ensure that the systems governed by DRARLC adhere to safety constraints. Specifically, the algorithm constructs a Predefined Safety Zone (PSZ) to delineate a safe feasible region for the system's tracking error. By leveraging nonlinear diffeomorphic mappings, the output space constraints are transformed into a bounded problem of transformation variables. Then, the DISS is rigorously generated by Lyapunov stability theory, which guarantees the uniform ultimate boundedness of the transformation variables. The DRARLC is designed based on the DISS to incorporate safety guarantees. In scenarios where the system model is known, the DISS is directly generated from the model information to construct the control law. By comparison, in model-unknown scenarios, neural networks are employed to approximate the system functions, allowing for online updates of the DISS and thereby facilitating control law design under model-free conditions. Finally,theoretical analyses substantiate the stability of the trajectory tracking closed-loop system. Numerical simulations demonstrate that during the online learning process, the tracking error consistently remains within the PSZ, and comparisons with Robust Adaptive Control (RAC) results validate the superiority of the proposed control law.
+    % \hl{This paper proposes a Dynamic Input Safety Set-Based Robust Adaptive Deep Reinforcement Learning Control (DRARLC) framework to optimize trajectory tracking of continuous nonlinear systems (both model-known and model-unknown) via deep reinforcement learning (DRL), while addressing safety constraint violations caused by DRL's exploratory nature. Its core innovations lie in three aspects: First, a Dynamic Input Safety Set (DISS) generation mechanism is developed, which transforms time-varying output constraints into a bounded problem of transformed variables via diffeomorphic mapping, then rigorously derives DISS using Lyapunov theory to ensure the tracking error stays within a Predefined Safety Zone (PSZ)—overcoming the limitations of static safety constraints in existing methods. Second, for model-unknown scenarios, neural networks approximate unknown system functions, enabling online adaptive updates of DISS to maintain safety without precise models, breaking the model dependence of traditional safety control. Third, DRARLC integrates DISS with DRL via a region-aware strategy: allowing free exploration in PSZ's central region to optimize performance, while enforcing DISS in boundary regions to guarantee safety, resolving the conservatism-optimality dilemma in conventional DRL. Theoretical analyses confirm closed-loop stability, and simulations verify that tracking errors remain within PSZ during learning, with performance superior to robust adaptive control(RAC) and barrier function based integral sliding mode control (ISMCbf).}
+
+    \hl{This paper proposes a dynamic input safety set-based robust adaptive deep reinforcement learning control (DRARLC) framework to optimize  the performance of trajectory tracking for continuous nonlinear systems (both model-known and unknown) via deep reinforcement learning (DRL), while addressing safety violations from DRL's exploratory nature.​A core dynamic input safety set (DISS) generation mechanism transforms time-varying output constraints into a bounded problem of transformed variables via diffeomorphic mapping, then derives DISS using Lyapunov theory to ensure tracking error stays within a predefined safety zone (PSZ).​For model-known scenarios, DISS is generated directly from model information for control law design. For model-unknown scenarios, neural networks approximate system functions to enable online DISS updates. DRARLC integrates DISS with DRL via a region-based strategy, allowing free exploration in PSZ's central region for performance optimization and enforcing DISS in boundary regions for safety, resolving the conservatism-optimality dilemma.Theoretical analyses confirm closed-loop stability, and simulations verify that tracking errors remain within PSZ during learning, demonstrating the superiority of the proposed algorithm.}
+\end{abstract}
+
+% %Graphical abstract
+% \begin{graphicalabstract}
+% %\includegraphics{grabs}
+% \end{graphicalabstract}
+
+% %Research highlights
+% \begin{highlights}
+% \item Research highlight 1
+% \item Research highlight 2
+% \end{highlights}
+
+%% Keywords
+\begin{keyword}
+Robust adaptive control \sep Safe reinforcement learning \sep Nonlinear systems \sep Trajectory tracking control
+\end{keyword}
+
+\end{frontmatter}
+
+%% Add \usepackage{lineno} before \begin{document} and uncomment 
+%% following line to enable line numbers
+%% \linenumbers
+
+%% main text
+%%
+\section{Introduction}
+
+The tracking control of nonlinear systems has garnered sustained attention in academic research due to its extensive applications in complex engineering fields such as robotics and aerospace. The universal approximation capabilities of neural networks offer novel solutions for addressing control problems characterized by unmodeled dynamics and parameter uncertainties \cite{486648,6797088,4639441}. \hl{For instance, neural networks integrated into prescribed-time observers enable fast, accurate estimation of states and disturbances in uncertain pure-feedback systems, with decoupled designs simplifying synthesis and ensuring preset convergence \cite {LV2025125813}; similarly, adaptive neural networks compensate for external disturbances in exoskeleton wheelchair robots to achieve fixed-time position tracking \cite {math10203853}; RBFNNs estimate lumped uncertainties (including time-varying mass) in tilting quadrotors, supporting adaptive sliding mode control with optimized gains \cite {https://doi.org/10.1002/rnc.7932}; deep reinforcement learning enhances integrated decision-planning-control in high-speed autonomous vehicle cruising \cite {10.1109/TITS.2024.3488519}; and LSTM networks combined with swarm optimization predict QUAV trajectory errors, aiding dual-loop sliding mode control under disturbances \cite {SRarticle}. These cases highlight neural networks' adaptability to diverse nonlinear scenarios, including strict convergence constraints.}
+
+By constructing neural network architectures with varied topological structures, researchers can reformulate these systems into linear or nonlinear parameterized models, thus implementing systematic solutions within RAC frameworks. In the realm of RAC, ensuring that the system achieves satisfactory transient and steady-state performance remains a critical challenge. The Prescribed Performance Control (PPC) method proposed by Bechlioulis et al. \cite{4639441,5406132,BECHLIOULIS2009532} employs a mathematical mapping to transform constrained nonlinear systems into equivalent unconstrained systems, thereby demonstrating that the stability of the unconstrained system is sufficient to achieve prescribed performance metrics. Although prescribed performance control can provide basic performance guarantees, it cannot ensure that the formulated control strategies possess superiority under specific requirements (such as minimal energy consumption and minimal settling time), especially when dealing with complex systems.
+
+To address these optimization requirements, Deep Reinforcement Learning (DRL) emerges as a promising approach by integrating the feature extraction capabilities of deep learning with the sequential decision-making processes of reinforcement learning. Conversely, the exploratory mechanisms inherent in deep reinforcement learning can lead the system to encounter hazardous state spaces, which poses significant risks in safety-sensitive scenarios such as medical robotics and spacecraft docking \cite{brunke2021safelearningroboticslearningbased}. Consequently, ensuring the safety of deep reinforcement learning in control tasks is a pivotal challenge. Research in Safe Reinforcement Learning (SRL) aims to embed formal safety guarantees into the learning process, with the central objective being the construction of mathematically verifiable safety constraint mechanisms\cite{LIU202313737}.
+
+Since García et al. first formalized the three components of SRL (system model, cost function, and constraint set) \cite{10.5555/2789272.2886795}, numerous solutions have been proposed. One notable approach is the extensive application of Lyapunov stability theory. Chow et al. \cite{10.5555/3327757.3327904,Chow2019LyapunovbasedSP} introduced a method for constructing Lyapunov functions that ensures the global safety of the behavioral policy during training via a set of local linear constraints. Perkins and Barto \cite{10.5555/944919.944955} developed a safety architecture based on the switching of multiple Lyapunov functions. Another significant advancement involves the development of barrier function methods. Cheng et al. \cite{DBLP:journals/corr/abs-1903-08792} proposed a framework that integrates existing model-free reinforcement learning algorithms with control barrier functions. Marvi et al. \cite{https://doi.org/10.1002/rnc.5132} created offline policy algorithms based on damping barrier functions, while Yang et al. \cite{8989956} designed a system transformation based on barrier functions, converting the original problem into an unconstrained optimization problem for safe policy design. Despite these advancements, several limitations persist, including (1) strong model dependency, (2) training instability, and (3) high costs of manual supervision.
+
+Robust adaptive control theory, with its inherent robustness and adaptability, exhibits potential for addressing the safety challenges associated with deep reinforcement learning. \hl{For instance, robust model reference adaptive control with dead-zone modification suppresses gust-induced drift in tail-sitter VTOLs, ensuring uniformly ultimately bounded roll tracking errors under nonparametric uncertainties via Lyapunov analysis \cite{act10070162}; similarly, adaptive integral sliding mode control handles parameter variations in vehicle steer-by-wire systems without prior perturbation bounds, eliminating the reaching phase and enhancing tracking robustness \cite{SAEarticle}; barrier function-based integral sliding mode control further improves ISMCbf robustness by avoiding perturbation bound reliance and reducing chattering \cite{wevj15010017}; adaptive backstepping with barrier Lyapunov functions addresses simultaneous dead-zone and actuator saturation constraints in sandwich systems, achieving finite-time output tracking within predefined bounds \cite{Azhdari01112024};and iterative learning control (ILC) addresses trajectory tracking in 2-D discrete-time systems via Wave Advanced Model transformation, with P-type ILC laws ensuring asymptotic convergence of tracking errors to zero through repetitive process analysis \cite{10667811}. These exemplify robust adaptive and learning-based strategies' efficacy in managing uncertainties across diverse complex systems.}
+
+The fusion of adaptive control theory and reinforcement learning has pioneered a novel paradigm in control, with its theoretical lineage traceable to the pioneering work of the Lewis team \cite{5227780}, which elucidated the intrinsic relationship between Adaptive Dynamic Programming (ADP) and reinforcement learning in optimal control problems. Building upon this foundation, Vamvoudakis et al. \cite{VAMVOUDAKIS2010878} proposed an online adaptive algorithm utilizing Actor-Critic neural networks that adapt continuously in time, demonstrating that conditions for incentivization persistence can ensure the Critic converges to the true optimal value function. Huang et al. \cite{HUANG2023407} introduced adaptive controllers developed through backstepping and predefined performance control methods, deriving optimal compensation terms by minimizing the cost function and addressing the compensation component through reinforcement learning policy iteration. Zhu et al.\cite{ZHU2024106693} present an optimized control algorithm that enhances simplicity by deriving RL adaptive laws from the negative gradient of a specially designed positive function related to the Hamilton-Jacobi-Bellman(HJB) equation's partial derivative. Liang et al. \cite{10124235} further explored the application of deep neural networks in control, developing a data-driven auxiliary controller based on an adaptive baseline controller, capable of dynamically adjusting the weights of the Actor-Critic network over time and with respect to tracking deviations. Elhaki et al. \cite{ELHAKI202314237} develop a novel form of reinforcement learning that employs multi-layer neural networks, in which the weights of both the output and hidden layers are adaptively designed for the actor and critic networks.
+
+% This paper addresses the safety issues arising from the optimization of nonlinear system trajectory tracking performance using deep reinforcement learning by proposing a novel Dynamic Input Safety Set-Based Robust Adaptive Deep Reinforcement Learning Control (DRARLC) law. The primary contributions of this work can be summarized as follows:
+% \begin{enumerate}
+%     \item A conversion mechanism from output constraints to Dynamic Input Safety Set (DISS) is proposed, along with an online generation algorithm for DISS based on Lyapunov functions. The utilization of DISS circumvent the direct verification of safety for deep reinforcement learning, thereby allowing the deployment of deep reinforcement learning algorithms within a safety framework.
+%     \item An adaptive law is designed to estimate the unknown system functions \(f(\cdot)\) and \(g(\cdot)\), facilitating safe control under model-free conditions.
+%     \item The definitions of Predefined Safety Zone (PSZ) and DISS serve to compress the exploration space and eliminate ineffective action space, enabling safe interactions in control tasks and enhancing learning efficiency.
+% \end{enumerate}
+
+This paper proposes a novel DRARLC framework to address the safety-optimization trade-off in nonlinear system trajectory tracking. Its key contributions are as follows:
+
+\begin{enumerate}
+    \item \hl{A DISS generation mechanism is proposed, which ensures the strict conversion from output constraints to input safety set. By mapping time-varying PSZ to a bounded problem using diffeomorphic mapping and applying Lyapunov stability theory, it guarantees that any input within DISS keeps the tracking error within PSZ.}
+    \item \hl{An adaptive update strategy for the DISS in model-free scenarios is designed. By using RBF neural networks to approximate unknown system functions, the adaptive laws are integrated into the DISS design, enabling safe control without relying on accurate system models.}
+    \item \hl{A region-based coordination mechanism is designed to balance safe exploration and performance optimization. By dividing the PSZ into central and boundary regions, it allows free exploration in the central region while enforcing DISS constraints in the boundary region, thereby improving learning efficiency and addressing the conservatism-optimality dilemma in existing DRL methods.}
+\end{enumerate}
+
+The remainder of the paper is organized as follows: Section 2 introduces the problem formulation and preliminaries. Section 3  provides a design and stability proof for the DRARLC algorithm. Section 4 showcases the simulation results. Section 5 offers conclusions.
+
+\section{Problem formulation and preliminaries}
+
+Consider a class of $n$-order continuous nonlinear systems\hl{\cite{8989956}}:
+\begin{equation}
+    \begin{aligned}
+      & \dot{x}_i = x_{i+1}, \quad i = 1,2,\dots,n-1 \\
+      & \dot{x}_n = f(\mathbf{x}) + g(\mathbf{x})u \\
+      & y = x_1 
+    \end{aligned}\label{eq:system}
+\end{equation}
+where $x_i,i=1,\dots,n$ are the system states, $\mathbf{x} = [x_1,\dots,x_n]^T \in \mathbb{R}^n$ is the state vector, $u \in \mathbb{R}$ is the control input, $f(\mathbf{x}):\mathbb{R}^n \to\mathbb{R},g(\mathbf{x}):\mathbb{R}^n \to\mathbb{R}$, with $f(\mathbf{x}), g(\mathbf{x}) \in \mathcal{C}^1$ being smooth functions.
+
+\textbf{Assumption 1} The system state $x_i,i=1,\dots,n$ is measurable.
+
+\textbf{Assumption 2} The desired trajectory $y_d(t)$ and its derivatives $y_d^{(k)}(t),k=1,\dots,n-1$ are globally bounded.
+
+\textbf{Assumption 3} The control gain satisfies $|g(\mathbf{x})| \geq g^* > 0$, and its sign is known.
+
+Define the tracking error:
+\begin{equation}
+    e(t) = y(t) - y_{d}(t)
+\end{equation}
+
+The time-varying safety boundary is described by the performance function $\rho(t)$:
+\begin{equation}
+    \rho(t) = (\rho_0 - \rho_\infty)e^{-\kappa t} + \rho_\infty
+    \label{eq:performance_function}
+\end{equation}
+where $\rho_0 , \rho_\infty > 0$ represent the initial and steady-state positions, respectively, and $\kappa > 0$ indicates the convergence rate of the boundary.
+
+The PSZ is represented by:
+\begin{equation}
+    \mathcal{E}(t) = \left( \delta_{-} \rho(t), \, \delta_{+}\rho(t) \right) \label{eq:psz_constraint}
+\end{equation}
+where $\delta_{-}\in [-1, 0)$ and $\delta_{+}\in (0, 1]$ are boundary relaxation coefficients.
+
+The control objective of this paper is to develop a robust adaptive deep reinforcement learning control law \(u\) for the system (\ref{eq:system}), which operates under Assumptions 1-3. This control law aims to ensure that the actual trajectory \(y\) tracks the desired trajectory \(y_d\) for all initial errors \(e(0) \in \mathcal{E}(t)\), while maintaining the tracking error \(e(t)\) within the safety set \(\mathcal{E}(t)\). Additionally, it guarantees that all signals in the closed-loop trajectory tracking control system remain uniformly ultimately bounded.
+
+\subsection{Diffeomorphism Constraint Transformation}
+Introduce a bijective mapping $\Phi: \mathbb{R} \to (\delta_{-}, \delta_{+})$ to achieve a diffeomorphic transformation from the PSZ to an unconstrained space\hl{\cite{BECHLIOULIS2009532}}:
+\begin{equation}
+    \Phi(z(t)) = \frac{e(t)}{\rho(t)} = \frac{\delta_{+} \exp(z(t)) + \delta_{-} \exp(-z(t))}{\exp(z(t)) + \exp(-z(t))}\label{eq:diffeomorphism}
+\end{equation}
+The inverse mapping $z(t) = \Phi^{-1}(\frac{e(t)}{\rho(t)})$ is explicitly expressed as:
+\begin{equation}
+    z(t) = \frac{1}{2} \ln \frac{\frac{e(t)}{\rho(t)}-\delta_{-}}{\delta_{+}-\frac{e(t)}{\rho(t)}}\label{ztrans}
+\end{equation}
+
+\begin{rmk}
+This transformation has the following key properties: the constraint transformation feature states that for any $t \geq 0$, if $z(t)$ is bounded, the original tracking error $e(t)$ must satisfy the PSZ constraint \eqref{eq:psz_constraint}, and:
+\begin{equation}
+    \begin{cases} 
+        \lim_{\frac{e(t)}{\rho(t)}\to\delta_{-}}z(t)=-\infty\\
+        \lim_{\frac{e(t)}{\rho(t)}\to\delta_{+}}z(t)=\infty\\
+    \end{cases}
+\end{equation}
+\begin{equation}
+    \quad \frac{\partial \Phi}{\partial z} > 0
+    \label{eq:phi_property}
+\end{equation}
+\end{rmk}
+
+\subsection{Soft Actor-Critic Algorithm}
+
+The Soft Actor-Critic (SAC) is an off-policy reinforcement learning algorithm that utilizes the Actor-Critic network framework \cite{haarnoja2018softactorcriticoffpolicymaximum,6492103}. It trains a stochastic policy with entropy, balancing exploration and exploitation through entropy regularization \cite{pmlr-v32-silver14}. The optimization objective is to maximize the weighted sum of expected return and policy entropy \cite{10502346}:
+\begin{equation}
+\pi^* = \arg \max_\pi \sum_{t} \mathbb{E}_{(s_t,a_t)} \left[ \gamma^t \left( R_t + \alpha H(\pi(\cdot | s_t)) \right) \right]
+\end{equation}
+where $\pi$ is the agent's policy, $\pi^*$ is the optimal policy, $\mathbb{E}$ denotes the expectation, $R_t$ is the immediate reward for taking action $a_t$ in state $s_t$, $s_t,a_t$ are the state and action at time $t$, $\gamma \in [0,1)$ is the discount factor that weighs the importance of future rewards, and $\alpha$ is a regularization coefficient, $H(\pi(\cdot | s_t))$is policy entropy.
+
+During the learning process, the SAC algorithm repeatedly performs policy evaluation and policy improvement. In the policy evaluation phase, its $Q$ function is given by:
+\begin{equation}
+    Q(s_t, a_t) = R_t  + \gamma \mathbb{E}_{s_{t+1}} \left[ V(s_{t+1}) \right]
+\end{equation}
+where the $V$ function is defined as:
+\begin{equation}
+V(s_t) = \mathbb{E}_{ a_t \sim \pi} \left[  Q(s_t, a_t) - \alpha \log \pi(a_t | s_t) \right]
+\end{equation}
+
+The update of the $Q$ function is computed by minimizing the Bellman residual:
+\begin{equation}
+J_Q(\omega) = \mathbb{E}_{(s_t, a_t) \sim M} \left[ \frac{1}{2} \left( Q_{\omega}(s_t, a_t) - (R_t + \gamma V_{\omega'} (s_{t+1})) \right)^2 \right]
+\end{equation}
+where $\omega'$ represents the weights of the target $Q$ function $Q_{\omega'}$. $M$ is the collected dataset. A soft update strategy is employed:
+\begin{equation}
+    \omega^{'} \leftarrow \tau \omega + (1 - \tau) \omega^{'}\label{soft_update}
+\end{equation}
+where $\tau$ is the soft update constant used to smooth the updating process.
+
+The policy optimization process can be expressed as:
+\begin{equation}
+    \pi_{new} = \arg \min_{\pi' \in \Pi} D_{KL} \left( \pi'(\cdot | s_t) \, \| \, \frac{\exp\left(\frac{Q^{\pi_{old}}(s_t, \cdot)}{\alpha}\right)}{Z^{\pi_{old}}(s_t)} \right)
+\end{equation}
+where $\pi_{new}$ is the optimized policy. The set $\Pi$ contains all selectable policies. $D_{KL}$ is the Kullback-Leibler divergence (KLD), which measures the difference between two probability distributions. $Q^{\pi_{old}}$ is the most recently updated $Q$ function, and $Z^{\pi_{old}}$ is the partition function used for normalization. The parameters of the policy network $\theta$ are updated directly by minimizing the expected KLD, which maximizes the objective function $J_{\pi}(\theta)$:
+\begin{equation}
+    J_{\pi}(\theta) = \mathbb{E}_{(s_t, a_t) \sim M} \left[ \alpha \log \pi(a_t | s_t) - Q(s_t, a_t) \right]
+\end{equation}
+
+The regularization coefficient $\alpha$ is used to balance exploration and exploitation during the learning process, with the loss function $J(\alpha)$ given by:
+\begin{equation}
+J(\alpha) = -\mathbb{E}_{s_t \sim M,a_t \sim \pi_{\theta}} \left[ \alpha \log \pi(a_t | s_t) + \tau_{\alpha} \right]
+\end{equation}
+where $\tau_{\alpha}$ is a constant used to adjust the influence of the regularization term.
+
+\subsection{Radial Basis Function Neural Network}
+A linearly parameterized radial basis function (RBF) neural network is considered for approximating nonlinear continuous functions defined on a compact set with arbitrary precision. This approach offers advantages such as strong generalization ability and rapid learning convergence. It consists of two layers, where the hidden layer performs a fixed nonlinear transformation, and the output layer implements a linear weighted sum of the hidden layer \cite{Du2015AdaptiveRO}. It can be described in the following form:
+\begin{equation}
+    f(s) = \theta^{T} \phi(s)
+\end{equation}
+where \(s =[s_1,\dots,s_{\zeta}]^T \in \Omega_s \subset \mathbb{R}^{\zeta}\) is the input vector, \(\theta=[\theta_1,\dots,\theta_l]^T \in \mathbb{R}^l\) is the weight vector, and \(\phi(s) = [\phi_1(s),\dots,\phi_l(s)]^T \in \mathbb{R}^l\) is the radial basis function vector, with $l$ denoting the number of hidden layer nodes, and $\phi_i(s)(i = 1,\dots ,l)$ representing the basis functions. Typically, $\phi_i(s)$ is chosen as a Gaussian function, which can be expressed as:
+\begin{equation}
+    \phi_i(s) = \exp\left(-\frac{\|s - b_i\|^2}{2\sigma_i^2}\right), \quad i = 1, \ldots, l \label{RBF}
+\end{equation}
+where \( b_i =  [b_{i,1},\dots,b_{i,{\zeta}}]^T \in \mathbb{R}^{\zeta}\) is the center of the Gaussian function, and \( \sigma_i \) represents the width of the Gaussian function.
+
+\begin{lemma}
+\cite{486648,6797088} If a sufficiently large number of nodes $l$ is chosen, the RBF neural network can approximate continuous and smooth nonlinear functions $f(s)\in \mathbb{R}$ defined on $\Omega_s \subset \mathbb{R}^{\zeta}$ with arbitrary precision:
+\begin{equation}
+    f(s) = \theta^{*T} \phi(s) + m
+\end{equation}
+where $\theta^{*}\in \mathbb{R}^l$ is the ideal weight vector, and $m$ is the approximation error. Here, the ideal weight vector $\theta^{*}$ minimizes $|m|$ for all $s \in \Omega_s \subset \mathbb{R}^{\zeta}$, expressed as:
+\begin{equation}
+    \theta^{*} := \arg \min_{\theta\in \mathbb{R}^l}\left\{ \sup_{s \in \Omega_s}| f(s) - \theta^T \phi(s)|\right\}
+\end{equation}
+On $\Omega_s \subset \mathbb{R}^{\zeta}$, both the ideal weight vector $\theta^{*}$ and the approximation error $m$ are bounded, and there exist constants $\overline{\theta}$ and $M$ such that
+\[\|\theta^{*}\| \leq \overline{\theta} ,|m| \leq M\]
+\end{lemma}
+
+\section{Dynamic Input Safety Set-Based Robust Adaptive Deep Reinforcement Learning Control Design}
+
+To ensure that the output of the system remains within the PSZ when any policy given by reinforcement learning is applied to the system, a composite control architecture is proposed:
+\begin{equation}
+    u = u_p + \eta(u_{rl})\label{uf}
+\end{equation}    
+where \(u_p\) is the robust adaptive baseline control component that provides fundamental stability assurance. \(u_{rl}\) is the reinforcement learning control component that achieves performance improvement through online optimization. \(\eta\) is a region-related function used to coordinate the contributions of the baseline control and reinforcement learning.
+
+The division of the safety area is shown in Figure \ref{PSZpic}, which divides \(\mathcal{E}(t)\) into two sub-regions. the boundary takeover region \(\mathcal{E}_o(t)\), located within \(\mathcal{E}(t)\) and contiguous to the external envelope, whose shape must be determined by considering actuator input limits, system dynamic characteristics, and control step size. The central region \(\mathcal{E}_c(t)\) is defined as \(\mathcal{E}(t) \setminus \mathcal{E}_o(t)\).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{figs/bound.png}
+    \caption{Schematic of PSZ.}
+    \label{PSZpic}
+\end{figure}
+
+During constructing the composite control law, the system's DISS must be clearly defined. This study analyzes and proves the DISS for both model-based and model-free scenarios, identifying the DISS in each case. We will first conduct an analysis of the model-based DISS.
+
+\subsection{Model-Based DRARLC}
+
+To obtain a direct relationship between the transformed error \(z(t)\) and the system input \(u\) from (\ref{eq:system}), we need to design a new error signal for the \(n\)-order system, combining Equation (\ref*{ztrans}):
+\begin{equation}
+    \begin{aligned}
+    E & = \left(\frac{d}{dt}+\lambda\right)^{n-1}z(t) \\ 
+    & = \sum_{j=0}^{n-1} \binom{n-1}{j} \lambda^j z(t)^{(n-1-j)}\label{E}
+    \end{aligned}
+\end{equation}
+where \(\lambda>0\) and \(\binom{n}{k} = \frac{n!}{k!(n-k)!}\). 
+Differentiating \(E\) gives:
+\begin{equation}
+    \begin{aligned}
+        \dot{E} & = \sum_{j=1}^{n-1} \binom{n-1}{j} \lambda^j z^{(n-j)} + z^{(n)}(t) \\
+                & = \chi(e,\dots,e^{(n-1)},t) + \frac{d \Phi^{-1}}{d \left(\frac{e(t)}{\rho(t)}\right)}\frac{1}{\rho(t)}\dot{x}_n \\
+                & = L + C(f(\mathbf{x})+g(\mathbf{x})u)\label{dE}
+    \end{aligned}
+\end{equation}
+where \(L = \chi(e,\dots,e^{(n-1)},t)\) involves system states, desired trajectories, and their derivatives as its argumentsinvolves system states, desired trajectories, and their derivatives as its arguments. \(C = \frac{d \Phi^{-1}}{d \left(\frac{e(t)}{\rho(t)}\right)}\frac{1}{ \rho(t)}\), which is related to the performance function of the PSZ and the transformation function, is positive within the PSZ. Both \(L\) and \(C\) are known. By designing a control law to ensure that the new error \(E\) is bounded, we can guarantee that \(z\) is bounded, thereby keeping the tracking error \(e\) within the PSZ.
+
+For the system described above, the DISS is designed as follows:
+\begin{equation}
+U = \left\{ 
+u \in \mathbb{R} \mid 
+\begin{array}{ll}
+u \leq -\frac{F}{J} & \text{if } EJ > 0 \\
+u \geq -\frac{F}{J} & \text{if } EJ < 0 
+\end{array} 
+\right\}.\label{U}
+\end{equation}
+where \(F = L + Cf(\mathbf{x})\) and \(J = Cg(\mathbf{x})\). From (\ref{dE}), we know that \(C > 0\), and by Assumption 3, we ensure that \(g(\mathbf{x}) \neq 0\). Thus, \(E = 0 \iff EJ = 0\), and we only need to design for the case where \(EJ \neq 0\).
+
+\begin{theorem}
+Consider the new error system (\ref{dE}). Given control inputs \(u \in U\) (from (\ref{U})), the trajectory tracking closed-loop control system ensures that, under the known conditions of \(f(\mathbf{x}), g(\mathbf{x})\) in system (\ref{eq:system}) and Assumptions 1-3, for \(\forall e(0) \in \mathcal{E}(t)\), the actual trajectory \(y\) can track the desired trajectory \(y_d\), and \(e(t) \in \mathcal{E}(t)\), while all signals in the closed-loop trajectory tracking control system are uniformly ultimately bounded.
+\end{theorem}
+
+\begin{proof}
+Consider the Lyapunov function candidate:
+\begin{equation}
+    V_b = \frac{1}{2}E^2
+\end{equation}
+Its derivative is:
+\begin{equation}
+    \begin{aligned}
+        \dot{V}_b & = E\dot{E} \\
+                & = E(L + C(f(\mathbf{x})+g(\mathbf{x})u)) \\
+                & = EF + EJu \\
+    \end{aligned}
+\end{equation}
+Clearly, for \(\forall u \in U\), it always holds that \(EF + EJu \leq 0\), thus \(\dot{V}_b \leq 0\) and \(E\) is bounded. Since (\ref{E}) is a stable linear differential equation, both \(z(t)\) and its derivatives up to order 
+\(n-1\) are bounded. According to Equation (\ref{eq:diffeomorphism}), if \(z(t)\) is bounded, the actual trajectory \(y\) can track the desired trajectory \(y_d\), and the tracking error \(e \in \mathcal{E}(t)\).
+
+Furthermore, based on (\ref{eq:diffeomorphism}),
+\begin{equation}
+    \begin{aligned}
+        & \dot{e}(t) = \dot{\rho}(t)\Phi(z(t))+\rho(t)\frac{\partial \Phi(z(t))}{\partial z(t)}\dot{z}(t) \\
+        & \dots \\
+        & e^{(n-1)}(t) = \rho^{(n-1)}(t)\Phi(z(t))+\dots+\rho(t)\frac{\partial \Phi(z(t))}{\partial z(t)} z^{(n-1)}(t)
+    \end{aligned}\label{dee}
+\end{equation}
+Since the definitions of \(\rho(t)\) and its derivatives up to order 
+\(n-1\), along with \(\Phi(z(t))\) and its partial derivatives up to order \(n-1\) with respect to \(z(t)\), are all bounded, we conclude that \(e(t)\) and its derivatives up to order 
+\(n-1\) are also bounded. Combining this with Assumption 2, we can conclude that the system state vector \(\mathbf{x}\) is bounded. Therefore, all signals in the closed-loop trajectory tracking control system are uniformly ultimately bounded.
+\end{proof}
+
+Next, we design an adaptive control law with safety constraints, using a region-switching control strategy based on the tracking error in space, balancing the autonomy of reinforcement learning with the safety of the system. Based on (\ref{U}), the control law is designed as:
+\begin{equation}
+    u=
+    \begin{cases} \label{umb}
+        u_p - \mathrm{sign}(EJ)(|u_{rl}| + \beta) & e \in \mathcal{E}_o(t)\\
+        u_p + u_{rl} & e \in \mathcal{E}_c(t)\\ 
+    \end{cases}
+\end{equation}
+where \(u_p = - \frac{F}{J}\) is the baseline control input based on the PSZ, \(u_{rl}\) is the input provided by reinforcement learning, and \(\beta > 0\) is a robust gain used to mitigate uncertainties arising from discretization in the boundary region and dynamic characteristics of the actuator. When the tracking error is in the central region, the control law employs a linear combination of the baseline and reinforcement learning terms, thereby relaxing the constraints on reinforcement learning. When the tracking error is in the boundary takeover region, the introduction of the sign function term and robust gain ensures the safety of the system trajectory.
+
+\begin{rmk}
+    Based on the proof in this section, for continuous systems, theoretically, any state that reaches the boundary takeover region from the internal region can remain within the PSZ. During simulation, if the defined boundary takeover region is too small, the controller-generated input may become excessively large, causing the system to exit the PSZ before it can react. Therefore, it is essential to define an appropriate range for the boundary takeover region.
+\end{rmk}
+
+Given that in most practical situations the specific information of the system cannot be accurately known, the model-based DRARLC becomes difficult to apply. Consequently, a DRARLC control method for the model-free scenario is further designed.
+
+\subsection{Model-Free DRARLC}
+
+For some complex systems, information about the system functions \(f(\mathbf{x})\) and \(g(\mathbf{x})\) is unavailable. Thus, neural networks are employed for estmation:
+\[f(\mathbf{x}) = \theta^{*T}_f \phi(\mathbf{x}) + m_f\]
+\[g(\mathbf{x}) = \theta^{*T}_g \phi(\mathbf{x}) + m_g\]
+where \(m_g\) and \(m_f\) denote the approximation errors of the two neural networks. According to Lemma 1, we have \(|m_g| \leq M_g\) and \(|m_f| \leq M_f\). Let \(\tilde{\theta}_f = \hat{\theta}_f - \theta^*_f\) and \(\tilde{\theta}_g = \hat{\theta}_g - \theta^*_g\), where \(\theta^*_f\) and \(\theta^*_g\) are the ideal weight vectors of the two neural networks, and \(\hat{\theta}_f\) and \(\hat{\theta}_g\) are the estimated weight vectors.
+
+Further derivation yields:
+\begin{equation}
+  \begin{aligned}
+    & f(\mathbf{x}) = m_f - \tilde{\theta}^{T}_f \phi(\mathbf{x}) + \hat{\theta}^{T}_f \phi(\mathbf{x}) \\
+    & g(\mathbf{x}) =  m_g - \tilde{\theta}^{T}_g \phi(\mathbf{x}) + \hat{\theta}^{T}_g \phi(\mathbf{x}) \label{fgnw}
+  \end{aligned}
+\end{equation}
+Combining the earlier derivation from (\ref{dE}), the DISS for the model-free scenario can be directly expressed as:
+\begin{equation}
+    U = \left\{ 
+    u \in \mathbb{R} \mid 
+    \begin{array}{ll}
+    u \leq u_a + u_b & \text{if } EJ > 0 \\
+    u \geq u_a + u_b & \text{if } EJ < 0 
+    \end{array} 
+    \right\}.\label{U2}
+\end{equation}
+Here, \(u_a + u_b\) represents the robust adaptive baseline control input. Specifically, \(u_a = - \frac{F}{J} - \frac{k\mathrm{sign}(E)}{J}, k \in \mathbb{R}^+\), and \(u_b = -(n_f+n_g(u_a+u_r)^2)\mathrm{sign}(g(\mathbf{x})) EC\), where \(n_f \in \mathbb{R}^+\) and \(n_g \in \mathbb{R}^+\). \(F\) and \(J\) are defined as \(F = L + C \hat{\theta}^{T}_f \phi(\mathbf{x})\) and \(J = C \hat{\theta}^{T}_g \phi(\mathbf{x})\). The update laws for \(\hat{\theta}_f\) and \(\hat{\theta}_g\) are as follows:
+\begin{equation}
+    \begin{aligned}
+        \dot{\hat{\theta}}_f = &  EC\phi(\mathbf{x}) - \delta_d \hat{\theta}_f \\
+        \dot{\hat{\theta}}_g = &  EC\phi(\mathbf{x}) (u_a + u_r) - \delta_d \hat{\theta}_g \label{fgupdate}
+    \end{aligned}
+\end{equation}
+where \(\delta_d \in \mathbb{R}^+\).
+
+The control input satisfying the DISS for the model-free scenario (\ref{U2}) can be expressed as:
+\begin{equation}
+    u = u_a + u_b + u_r\label{u1}
+\end{equation}
+where \(u_r = - \mathrm{sign}(EJ)|u_{rl}|\), and \(u_{rl}\) is the control input based on reinforcement learning.
+
+\begin{theorem}
+    Considering the new error system (\ref{dE}), the trajectory tracking closed-loop control system with adaptive laws (\ref{fgupdate}) and control inputs \(u \in U\) (from (\ref{U2})) guarantees that, under the conditions where \(f(\mathbf{x})\) and \(g(\mathbf{x})\) are unknown in system (\ref{eq:system}) and under Assumptions 1-3, for \(\forall e(0) \in \mathcal{E}(t)\), by appropriately selecting the design constants \(k, n_f, n_g,\delta_d\), the actual trajectory \(y\) can track the desired trajectory \(y_d\), and \(e(t) \in \mathcal{E}(t)\), while all signals in the closed-loop trajectory tracking control system are uniformly ultimately bounded.
+\end{theorem}
+
+\begin{proof}
+    Consider the Lyapunov function candidate to ensure that the neural network weights and errors can converge:
+\begin{equation}
+    V_f = \frac{1}{2}E^2 + \frac{1}{2} \|\tilde{\theta}_f\|^2 + \frac{1}{2} \|\tilde{\theta}_g\|^2
+\end{equation}
+Its derivative is given by:
+\begin{equation}
+    \begin{aligned}
+    \dot{V}_f = & E\dot{E} + \tilde{\theta}^{T}_f \dot{\hat{\theta}}_f + \tilde{\theta}^{T}_g \dot{\hat{\theta}}_g \\
+            = &  E(L + C(f(\mathbf{x})+g(\mathbf{x})u)) + \tilde{\theta}^{T}_f \dot{\hat{\theta}}_f + \tilde{\theta}^{T}_g \dot{\hat{\theta}}_g  
+    \end{aligned}
+\end{equation}
+Substituting (\ref*{fgnw}) yields:
+\begin{equation}
+    \begin{aligned}
+    \dot{V}_f = &  EL + EC \hat{\theta}^{T}_f \phi(\mathbf{x}) + EC (m_g - \tilde{\theta}^{T}_g \phi(\mathbf{x}))(u_a + u_r)\\ 
+              & + EC \hat{\theta}^{T}_g \phi(\mathbf{x})(u_a + u_r)+ EC (m_f - \tilde{\theta}^{T}_f \phi(\mathbf{x}))  \\
+              & + \tilde{\theta}^{T}_f \dot{\hat{\theta}}_f + \tilde{\theta}^{T}_g \dot{\hat{\theta}}_g + ECg(\mathbf{x})u_b \label{dl1}
+    \end{aligned}
+\end{equation}
+Substituting (\ref{fgupdate}) into (\ref*{dl1}) gives:
+\begin{equation}
+    \begin{aligned}
+    \dot{V}_f = &  EL + EC \hat{\theta}^{T}_f \phi(\mathbf{x}) + EC \hat{\theta}^{T}_g \phi(\mathbf{x})(u_a + u_r)  \\ 
+             & + EC m_f + EC m_g(u_a + u_r) - \delta_d \tilde{\theta}^{T}_f \hat{\theta}_f - \delta_d \tilde{\theta}^{T}_g \hat{\theta}_g  \\
+             & -(n_f+n_g(u_a + u_r)^2)g(\mathbf{x})\mathrm{sign}(g(\mathbf{x})) (EC)^2\label{dV2} 
+    \end{aligned}
+\end{equation}
+Furthermore, the following holds:
+\begin{equation}
+    \tilde{\theta}^T\hat{\theta}=\frac{1}{2}\|\tilde{\theta}\|^2+\frac{1}{2}\|\hat{\theta}\|^2-\frac{1}{2}\|\theta^\star\|^2\label{thetne}
+\end{equation}
+Let:
+\begin{equation}
+    \begin{aligned}
+        V_1 = &  EC m_f + EC m_g (u_a + u_r) - \delta_d \tilde{\theta}^{T}_f \hat{\theta}_f - \delta_d \tilde{\theta}^{T}_g \hat{\theta}_g \\ 
+        & -(n_f+n_g(u_a + u_r)^2)g(\mathbf{x})\mathrm{sign}(g(\mathbf{x})) (EC)^2\label{V_1}
+    \end{aligned}
+\end{equation}
+From Assumption 3, we have \(g(\mathbf{x})\mathrm{sign}(g(\mathbf{x})) \geq g^*\), and substituting (\ref*{thetne}) yields:
+\begin{equation}
+    \begin{aligned}
+        V_1 \leq &  EC m_f + EC m_g (u_a + u_r)    \\
+        & -n_f g^*(EC)^2 - n_g g^* (u_a + u_r)^2(EC)^2\\
+        & - \frac{\delta_d}{2}\|\tilde{\theta}_f\|^2-\frac{\delta_d}{2}\|\hat{\theta}_f\|^2+\frac{\delta_d}{2}\|\theta^\star_f\|^2 \\ 
+        & - \frac{\delta_d}{2}\|\tilde{\theta}_g\|^2-\frac{\delta_d}{2}\|\hat{\theta}_g\|^2+\frac{\delta_d}{2}\|\theta^\star_g\|^2 \\ 
+    \end{aligned}
+\end{equation}
+Using Young's inequality and the boundedness of \(m_f\) and \(m_g\), we obtain:
+\begin{equation}
+    \begin{aligned}
+        V_1 \leq & - \frac{\delta_d}{2}\|\tilde{\theta}_f\|^2-\frac{\delta_d}{2}\|\hat{\theta}_f\|^2+\frac{\delta_d}{2}\|\theta^\star_f\|^2 \\ 
+        & - \frac{\delta_d}{2}\|\tilde{\theta}_g\|^2-\frac{\delta_d}{2}\|\hat{\theta}_g\|^2+\frac{\delta_d}{2}\|\theta^\star_g\|^2 \\ 
+        & + \frac{M_f^2}{4n_fg^*} + \frac{M_g^2}{4n_gg^*} \leq - \frac{\delta_d}{2}\|\tilde{\theta}_f\|^2 - \frac{\delta_d}{2}\|\tilde{\theta}_g\| + d \\
+    \end{aligned}
+\end{equation}
+where \(d\) is the upper bound for the remaining part of \(V_1\). Combining (\ref*{dV2}) and (\ref{V_1}) gives:
+\begin{equation}
+    \begin{aligned}
+        \dot{V}_f = & EL + EC \hat{\theta}^{T}_f \phi(\mathbf{x}) + EC \hat{\theta}^{T}_g \phi(\mathbf{x})(u_a + u_r) + V_1 \\
+                = & EF + EJ(u_a + u_r) + V_1\\
+                = & EF + EJ(- \frac{F}{J} - \frac{k\mathrm{sign}(E)}{J}) - EJ\mathrm{sign}(EJ)|u_{rl}| + V_1 \\
+                = & - k|E| - |EJ||u_{rl}| + V_1 \\
+                \leq &  - k|E| - |EJ||u_{rl}| - \frac{\delta_d}{2}\|\tilde{\theta}_f\|^2 - \frac{\delta_d}{2}\|\tilde{\theta}_g\| + d \\
+    \end{aligned}\label{dV3}
+\end{equation}
+Analyzing (\ref*{dV3}), we see that when \(V_1 = d\) and \( \dot{V}_f \leq 0\), the following holds:
+\begin{equation}
+    \begin{aligned}
+        - k|E| - |EJ||u_{rl}| - \frac{\delta_d}{2}\|\tilde{\theta}_f\|^2 - \frac{\delta_d}{2}\|\tilde{\theta}_g\| + d \leq & 0
+    \end{aligned}
+\end{equation}
+When \(|E| \geq \frac{d}{k}\), it follows that \( \dot{V}_f \leq 0\) and \(E\) will converge to a fixed boundary of \(\frac{d}{k}\), ensuring that \(E\) is bounded. Similarly, when \(\|\tilde{\theta}_f\| \geq \frac{d}{\delta_d}\) and \(\|\tilde{\theta}_g\| \geq \frac{d}{\delta_d}\), we have \( \dot{V}_f \leq 0\), which implies that \(\|\tilde{\theta}_f\|\) and \(\|\tilde{\theta}_g\|\) are also bounded. Consequently, it follows that \(\|\hat{\theta}_f\|\) and \(\|\hat{\theta}_g\|\) are bounded. Given that (\ref{E}) is a stable linear differential equation, both \(z(t)\) and its derivatives up to order 
+\(n-1\) are bounded. According to (\ref{eq:diffeomorphism}), the boundedness of \(z(t)\) implies that the actual trajectory \(y\) can track the desired trajectory \(y_d\), with the tracking error \(e \in \mathcal{E}(t)\). From (\ref{dee}), it is evident that \(e(t)\) and its derivatives up to order 
+\(n-1\) are bounded, which, combined with Assumption 2, leads to the conclusion that the system state vector \(\mathbf{x}\) is bounded. Therefore, all signals in the closed-loop trajectory tracking control system are uniformly ultimately bounded.
+\end{proof}
+
+Based on the DISS for the model-free scenario (\ref{U2}), we derive:
+\begin{equation}
+    u=
+    \begin{cases} \label{umf}
+        u_p - \mathrm{sign}(EJ)(|u_{rl}|+\beta) & e \in \mathcal{E}_o(t)\\
+        u_p + u_{rl} & e \in \mathcal{E}_c(t)\\ 
+    \end{cases} 
+\end{equation}
+where \(u_p = - (n_f+n_g(u_a-\mathrm{sign}(EJ)|u_{rl}|)^2)\mathrm{sign}(g(\mathbf{x})) EC- \frac{F}{J} - \frac{k\mathrm{sign}(E)}{J} \) is the robust adaptive baseline control input based on the PSZ. It is evident that when \(n_f = 0\), \(n_g = 0\), and \(k = 0\), this control law applies to the case where the system is known, representing a special case of the aforementioned control law.
+
+\begin{rmk}
+    \hl{
+        In the experimental validation, it was observed that the parameters $n_f$, $n_g$, and $k$ admit a relatively wide range of feasible values. Specifically, configurations with $k = 0.05$, $n_f = 0.02$, $n_g = 0.02$ and $k = 0.005$, $n_f = 0.002$, $n_g = 0.002$ were both shown to yield satisfactory tracking performance. Additionally, the design parameter $\delta_d$ directly influences the convergence bounds of the unknown function estimation. Empirical trials with $\delta_d = 20$ and $\delta_d = 40$ demonstrated comparable stability margins, with larger values of $\delta_d$ yielding more aggressive adaptation rates and tighter asymptotic error bounds.
+    }
+\end{rmk}
+
+\hl{Figure \ref{figD} illustrates the overall framework of the proposed control algorithm, including the relationships among system states, tracking errors, and control inputs. In the algorithm, the control input consists of two main components: a robust adaptive baseline control component and a reinforcement learning control component. The reinforcement learning control input is introduced through an agent, while overall safety is ensured by the robust adaptive baseline control component and the coordinating controller. Finally, the Model-Free DRARLC algorithm can be summarized in Algorithm \ref{A1}. }
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{figs/flow}
+    \caption{Model-Free DRARLC Algorithm.}
+    \label{figD}
+\end{figure}
+
+\begin{algorithm}
+    \caption{Model-Free DRARLC Algorithm}
+    \begin{algorithmic}[1]
+    \State Initial $\hat{\theta}_f$, $\hat{\theta}_g$, PSZ boundary $\rho$
+    \State Initialize parameters $k, n_f, n_g, \delta_d,\beta$
+    \State \textbf{Input:} states $\mathbf{x}$, error $e$
+    \While{true}
+        \State Calculate $L = \chi(e,\dots,e^{(n-1)},t)$
+        \State Calculate $C = \frac{\partial \Phi^{-1}}{\partial \left(\frac{e(t)}{\rho(t)}\right)}\frac{1}{\rho(t)}$
+        \State Estimate $F \gets L + C \hat{\theta}^{T}_f \phi(\mathbf{x})$ \hfill  // $\phi(\mathbf{x})$ is the radial basis function
+        \State Estimate $J \gets C \hat{\theta}^{T}_g \phi(\mathbf{x})$
+        \State Calculate $u_a \gets -\frac{F}{J} - \frac{k \mathrm{sign}(E)}{J}$
+        \State Calculate $u_b \gets -(n_f + n_g(u_a + u_r)^2) \mathrm{sign}(g(\mathbf{x})) EC$
+    
+        \State Calculate reinforcement learning input:
+        \State $u_{rl} \gets \text{RL\_Agent}(s)$ \hfill // Obtain from the RL agent
+        \State $u_r \gets -\mathrm{sign}(EJ)|u_{rl}|$
+        \State Update $\dot{\hat{\theta}}_f \gets EC\phi(\mathbf{x}) - \delta_d \hat{\theta}_f$
+        \State Update $\dot{\hat{\theta}}_g \gets EC\phi(\mathbf{x})(u_a + u_r) - \delta_d \hat{\theta}_g$
+        
+        \If{$e(t) \in \mathcal{E}_o(t)$} \hfill  // In the boundary takeover region 
+            \State $u \gets u_a + u_b - \mathrm{sign}(EJ)(|u_{rl}| + \beta)$
+        \ElsIf{$e(t) \in \mathcal{E}_c(t)$} \hfill  // In the central region 
+            \State $u \gets u_a + u_b + u_{rl}$
+        \EndIf
+
+    \EndWhile
+    \State \textbf{Output:} Control input $u$
+    \end{algorithmic}
+    \label{A1}
+\end{algorithm}
+
+\subsection{\hl{Implementation Details of the SAC Algorithm}}
+
+\hl{The implementation of the Soft Actor-Critic (SAC) algorithm in this study follows a standard architecture with modifications to ensure compatibility with the safety-critical control task. This section details the network structures, parameter configurations, and key computational procedures.}
+
+\subsubsection{\hl{Network Architectures}}
+
+\paragraph{\hl{Actor Network}}
+\hl{The Actor network, denoted as $\pi_\theta(a|s)$, is responsible for generating actions based on the current state $s$. It consists of three fully connected layers with layer normalization applied to enhance training stability. The input dimension of the Actor network is $n_s$, corresponding to the state vector $s = [\mathbf{x}^T, \rho, e]^T$, where $\mathbf{x}$ is the system state, $\rho$ is the dynamic safety boundary, and $e$ is the tracking error. The hidden layers each contain $h_a = 128$ neurons, and ReLU activation functions are used throughout.}
+
+\hl{The output layer of the Actor network generates the parameters of a Gaussian distribution: the mean $\mu$ and the standard deviation $\sigma$. To ensure the action remains within the predefined range $[a_{\text{min}}, a_{\text{max}}]$, the mean is passed through a $\tanh$ function and then linearly scaled. The standard deviation is obtained by exponentiating the output of a separate fully connected layer, with its logarithm clamped between $\log\sigma_{\text{min}} = -15$ and $\log\sigma_{\text{max}} = 2$ to prevent numerical instability.}
+
+\hl{The forward pass of the Actor network can be formalized as follows:}
+\[
+\begin{align}
+x_1 &= \text{ReLU}(\text{LN}(W_1 s + b_1)), \\
+x_2 &= \text{ReLU}(\text{LN}(W_2 x_1 + b_2)), \\
+\mu_{\text{raw}} &= W_{\mu} x_2 + b_{\mu}, \\
+\log\sigma &= \text{clamp}(W_{\sigma} x_2 + b_{\sigma}, \log\sigma_{\text{min}}, \log\sigma_{\text{max}}), \\
+\mu &= \tanh(\mu_{\text{raw}}) \cdot \text{range\_factor1} + \text{range\_factor2}, \\
+\sigma &= \exp(\log\sigma),
+\end{align}
+\]
+\hl{where $\text{LN}$ denotes layer normalization, $W_i$ and $b_i$ are the weight matrices and bias vectors of the respective layers, $\text{range\_factor1} = (a_{\text{max}} - a_{\text{min}})/2$, and $\text{range\_factor2} = (a_{\text{max}} + a_{\text{min}})/2$.}
+
+\hl{Actions are sampled from the Gaussian distribution $\mathcal{N}(\mu, \sigma)$ using the reparameterization trick, which allows for differentiable sampling:}
+\[
+\begin{align}
+z &= \mu + \sigma \cdot \epsilon, \quad \epsilon \sim \mathcal{N}(0, 1), \\
+a &= \tanh(z) \cdot \text{range\_factor1} + \text{range\_factor2}.
+\end{align}
+\]
+\hl{The log probability of the sampled action is computed as:}
+\begin{equation}
+\log\pi(a|s) = \log\mathcal{N}(z|\mu, \sigma) - \sum_{i=1}^{n_a} \log(1 - \tanh^2(z_i)) - \sum_{i=1}^{n_a} \log(\text{range\_factor1}_i),
+\end{equation}
+\hl{where $n_a$ is the dimension of the action space.}
+
+\paragraph{\hl{Critic Network}}
+\hl{The Critic network employs a twin Q-network architecture (Twin Delayed DDPG, TD3) to mitigate overestimation bias. Each Q-network, denoted as $Q_{\phi_1}(s,a)$ and$Q_{\phi_2}(s,a)$, takes the concatenated state-action pair $(s,a)$ as input and outputs a scalar Q-value. The input dimension of the Critic network is $n_s + n_a$, where $n_a = 1$ is the action dimension.}
+
+\hl{Similar to the Actor network, the Critic network consists of three fully connected layers with layer normalization. The first two hidden layers each contain $h_c = 128$ neurons, and ReLU activation functions are used. The output layer is a single neuron with no activation function, directly producing the Q-value estimate.}
+
+\hl{The forward pass of each Q-network can be described as:}
+\[
+\begin{align}
+x_{q1} &= \text{ReLU}(\text{LN}(W_{q1} [s; a] + b_{q1})), \\
+x_{q2} &= \text{ReLU}(\text{LN}(W_{q2} x_{q1} + b_{q2})), \\
+Q_{\phi}(s,a) &= W_{q3} x_{q2} + b_{q3},
+\end{align}
+\]
+\hl{where $[s; a]$ denotes the concatenation of the state and action vectors.}
+
+\subsubsection{\hl{Training Parameters}}
+
+\hl{The training process of the SAC algorithm is governed by several key hyperparameters, summarized in Table \ref{tab:sac_hyperparameters}.}
+
+\begin{table}[htbp]
+\centering
+\caption{SAC Algorithm Hyperparameters}
+\label{tab:sac_hyperparameters}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
+\hline
+Discount factor & \(\gamma\) & 0.99 \\
+\hline
+Soft update coefficient & \(\tau\) & 0.005 \\
+\hline
+Q-network learning rate & \(\eta_Q\) & \(3 \times 10^{-3}\) \\
+\hline
+Policy network learning rate & \(\eta_\pi\) & \(3 \times 10^{-4}\) \\
+\hline
+Initial entropy coefficient & \(\alpha_0\) & 0.01 \\
+\hline
+Batch size & \(N_{\text{batch}}\) & 128 \\
+\hline
+Replay buffer size & \(N_{\text{mem}}\) & \(10^5\) \\
+\hline
+Log standard deviation bounds & \([\log\sigma_{\text{min}}, \log\sigma_{\text{max}}]\) & \([-15, 2]\) \\
+\hline
+\end{tabular}
+\end{table}
+
+\hl{The discount factor $\gamma = 0.99$ emphasizes long-term rewards, while the soft update coefficient $\tau = 0.005$ controls the rate at which the target networks are updated. The learning rates for the Q-networks and policy network are set to $\eta_Q = 3 \times 10^{-3}$ and $\eta_\pi = 3 \times 10^{-4}$, respectively, using the Adam optimizer.}
+
+\hl{The initial entropy coefficient $\alpha_0 = 0.01$ balances the exploration-exploitation trade-off, with$\alpha$ being learnable during training. The batch size $N_{\text{batch}} = 128$ determines the number of samples used in each update step, and the replay buffer size $N_{\text{mem}} = 10^5$ stores the agent's experience for off-policy learning.}
+
+\subsubsection{Key Setup}
+
+\paragraph{Rewards Design}
+A discrete reward function is employed, defined as \(R_t = \xi_1 R_e + \xi_2 R_u\), with reward function parameters \(\xi_1 = 1\) and \(\xi_2 = 0.04\).
+\[
+    R_e = \begin{cases} 
+    20 & \text{if } |e| < 0.02 b \\
+    15 & \text{if } 0.02 b \leq |e| < 0.1 b \\
+    10 & \text{if } 0.1 b \leq |e| < 0.2 b \\
+    5 & \text{if } 0.2 b \leq |e| < 0.5 b \\
+    2 & \text{if } 0.5 b \leq |e| < 0.7 b \\
+    1 & \text{if } 0.7 b \leq |e| < b \\
+    0 & \text{otherwise}
+    \end{cases}
+\]
+where \(b\) represents a predefined boundary, determined by the PSZ in this paper. The specific reward values depend on the current state relative to the boundary, and the closer the state is to the boundary, the lower the reward.
+\[R_u = \overline{u}_{rl} - |u_{rl}|\]
+where \(u_{rl}\) indicates the input from reinforcement learning, and \(\overline{u}_{rl} = 30\) represents the upper limit of the reinforcement learning input. The larger the reinforcement learning input, the lower the reward obtained.
+
+\paragraph{\hl{Implementation Notes}}
+\hl{All neural networks are initialized using orthogonal initialization with standard deviation 1.0 for the weight matrices and zero for the bias vectors. Layer normalization is applied to all hidden layers to stabilize training and improve convergence. The action range is set to $[a_{\text{min}}, a_{\text{max}}]$, which is determined by the specific requirements of the control task.}
+
+\begin{rmk}​
+\hl{Compared with conventional deep reinforcement learning (DRL) methods, the proposed DRARLC method addresses key limitations in balancing safety and optimization, with its core advantages explained as follows:}​
+\begin{enumerate}​
+\item \hl{Conventional model-based safe DRL methods often struggle with dynamic environments due to their reliance on fixed system dynamics. In contrast, DRARLC generates time-varying DISS directly from output constraints, enabling real-time adaptation to system state changes without requiring preknown dynamics, thus enhancing flexibility in complex scenarios.}​
+\item \hl{Many model-free DRL methods overlook safety risks during online learning, especially when approximating unknown functions. DRARLC mitigates this by embedding safety guarantees into adaptive updates through DISS, ensuring that even with imprecise function approximations, the system remains within safe bounds throughout the learning process.}​
+\item \hl{Traditional DRL often faces a trade-off: strict safety constraints limit exploration efficiency, while aggressive optimization risks violating safety. DRARLC resolves this by partitioning PSZ into central and boundary regions—allowing free exploration for performance optimization in the central region, while enforcing DISS constraints near boundaries—thus achieving both rigorous safety and efficient learning.}​
+\end{enumerate}​
+\end{rmk}​
+
+
+\section{Simulation Results}
+
+To validate the effectiveness of the designed control laws in both model-based and model-free scenarios, we conducted simulation experiments using the controlled Van-der-Pol oscillator with the dynamics described as follows\hl{\cite{8989956}}:
+\[
+    \begin{cases} 
+        \dot{x}_1 = x_2 \\
+        \dot{x}_2 = -x_1 + 0.5(1-x_2^2)x_2 + x_1 u
+    \end{cases} 
+\]
+
+The desired trajectory is set as \(y_d(t) = \mathrm{sin}(t) + 12\).
+
+The initial position is \(x_1 = 8, x_2 = 0\). The boundary performance function parameters are defined as \(\rho_0 = 10\), \(\rho_\infty = 0.02\rho_0\), and \(\kappa = 1\). The upper and lower bounds for the transformation function are \(\delta_{-} = -1\) and \(\delta_{+} = 1\). The takeover region is defined as \(\mathcal{E}_o(t) = \{e \mid |e| \geq 0.8\delta_{+}\rho(t)\}\), and the robust gain is set to \(\beta = 0.05\).The simulation step size is set to 0.01.
+
+\hl{The simulations were developed in Python, using SciPy's odeint solver for numerical integration of the Van der Pol oscillator's nonlinear dynamics. With an object-oriented design, it encapsulates system state updates, control input processing, and safety constraint checks into a unified interface, enabling seamless integration with reinforcement learning algorithms . It includes a built-in sinusoidal reference trajectory and segmented reward function to quantitatively evaluate control performance. Hardware configuration comprised an NVIDIA RTX 2080 GPU and Intel Core i7-10700K CPU. The GPU accelerated parallel computations in neural network training, while the multi-core CPU handled simulation dynamics and data processing, ensuring real-time interaction and efficient algorithm validation.}
+
+
+\subsection{Model-Based DRARLC Algorithm}
+
+The simulation results are presented in Figures \ref{fig1} and \ref{fig1c}. Figure \ref*{fig1} depicts the tracking error and system states of the Van-der-Pol oscillation system under both model-based DRARLC and RAC (using $u_p$ from (\ref{umb}) as the Robust Adaptive Control law). The gray area in subplot (a) indicates the PSZ. The results demonstrate that the system achieves better transient performance under the model-based DRARLC control, with the tracking error consistently remaining within the PSZ. In Figure \ref{fig1c}, \(u\) represents the control input of the model-based DRARLC, while \(u_o\) denotes the control input of the RAC. The performance of reinforcement learning under this control law is also stable and outstanding. The reward curve obtained from reinforcement learning is shown in Figure \ref{fig2}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/mbpos(1)}
+    \caption{(a) Tracking error, (b) System state \(x_1\).}
+    \label{fig1}
+\end{figure}
+\begin{figure}[htbp] 
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/mbci}
+    \caption{Control input.}
+    \label{fig1c}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/mbSAC2}
+    \caption{Rewards curve of SAC , with the horizontal axis representing the number of iterations and the vertical axis indicating the average rewards per episode.}
+    \label{fig2}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/mfpos(1).png}
+    \caption{(a) Tracking error, (b) System state \(x_1\).}\label{fig4}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/mfci2.png}
+    \caption{Control input.}
+    \label{fig4c}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/mfest.png}
+    \caption{Estimates of \(f(x),g(x)\).}
+    \label{fig4e}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/mfest2.png}
+    \caption{Estimation errors of \(f(x),g(x)\).}
+    \label{fig4ee}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/mfSAC2}
+    \caption{Rewards curve of SAC , with the horizontal axis representing the number of iterations and the vertical axis indicating the average rewards per episode.}
+    \label{fig4s}
+\end{figure}
+
+
+
+\subsection{Model-Free DRARLC Algorithm}
+
+Two RBF neural networks with 30 neurons each are used to approximate the unknown terms \(f(\mathbf{x})\) and \(g(\mathbf{x})\), with the neural network centers uniformly distributed in the compact set \(\Omega_{x} = \{[0,25]\times[-2,20]\}\). The control law design parameters are set to \(k = 0.005\), \(n_f = 0.002\), and \(n_g = 0.002\). The simulation results are shown in Figures \ref{fig4} and \ref{fig4c} .
+
+Figure \ref{fig4} illustrates the tracking error and system states of the Van-der-Pol oscillation system under both model-free DRARLC and RAC (using $u_p$ from (\ref{umf}) as the Robust Adaptive Control law). The gray area in subplot (a) indicates the PSZ. The results indicate that the system achieves better transient performance under model-free DRARLC control, with the tracking error consistently remaining within the PSZ. In Figure \ref{fig4c}, $u$ represents the control input of the model-free DRARLC, while $u_o$ denotes the control input of the RAC. Figure \ref{fig4e} and Figure \ref{fig4ee} illustrates the estimates and estimation errors of \(f(x),g(x)\). The reward curve obtained from reinforcement learning is shown in Figure \ref{fig4s}.
+
+\begin{rmk}
+    In practical applications, the size of the range of reinforcement learning control inputs and the control step size are crucial. When the input provided by reinforcement learning is too large and the system is close to the boundary, the generated control input may increase sharply, potentially causing the system to exit the PSZ in the next step. If this phenomenon occurs, it is necessary to reduce the step size or decrease the range of the reinforcement learning control input. The range of reinforcement learning control inputs also affects its tuning capability. If the range is too small, it may not achieve the desired control effect.
+\end{rmk}
+
+\subsection{\hl{Simulation comparison}}
+
+\hl{Compared with the integral sliding mode control (ISMC) design based on barrier function (ISMCbf) and the conventional reinforcement learning algorithm (SAC), DRARLC demonstrates remarkable advantages. For ISMCbf, considering the system dynamics $f(x),g(x)$ as unknown, the control law is designed as\cite{wevj15010017}:}
+\[
+    u = \frac{1}{k}\left[ \ddot{x}_d - c_1 e_1 - c_2 e_2 - \frac{e_2 + Z}{\varepsilon - |e_2 + Z|} \right]
+\]
+\hl{where $e_1 = x_1 - x_d,e_2 = x_2 - \dot{x}_d$denote the tracking errors,$x_d$ is reference input,$\varepsilon$ is a small constant,$k$ (assumed to be constant) represents the input gain $g(x)$ ,and $Z \in \mathbb{R}^1$ is integral term with $\dot{Z} = c_1 e_1 + c_2 e_2$. In figure \ref{fig5} and figure \ref{fig7}  ,ISMCbf10 and ISMCbf150 represent the cases for $k=10$ and $k=150$, respectively, with parameters $c_1 =300$ and $c_2 = 50$.The SAC algorithm employs the same parameters as the DRL component of DRARLC for fair comparison.}
+
+\subsubsection{\hl{Safety comparison}}
+
+\hl{As illustrated in Figure \ref{fig5}, the superiority of the DRARLC algorithm in terms of safety is demonstrated. The DRARLC consistently remains within the safe zone during the training process, while the conventional SAC algorithm has the potential to cross the safety boundaries at any episode. The control performance of ISMCbf depends on the choice of $k$ , which represents the estimation of the $g(x)$ function. If an inappropriate value is selected, ISMCbf cannot guarantee that it will remain within the safe region at all times.}
+
+\hl{Figure \ref{fig6} illustrates several scenarios during the training process of DRARLC to demonstrate the safety of the system. When the tracking error transitions from the center region of the PSZ to the boundary takeover region, the system is capable of returning to the center region of the PSZ or remaining within the boundary takeover region of the PSZ. These three scenarios indicate that even if the control inputs provided during the exploration and tuning process of reinforcement learning are not entirely reasonable, DRARLC can still ensure that the tracking error remains within the PSZ. }
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figs/provesafetycompare.png}
+    \caption{Comparison of ISMCbf, conventional SAC, and DRARLC in terms of safety.}
+    \label{fig5}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figs/provesafe2.png}
+    \caption{(a), (b), and (c) are tracking errors from three different reinforcement learning training episodes.}
+    \label{fig6}
+\end{figure}
+
+\subsubsection{\hl{Performance comparison}}
+
+\hl{As shown in Figure \ref{fig7},DRARLC1000, DRARLC5000, and DRARLC9000 represent the performance of DRARLC after training for 1000, 5000, and 9000 iterations, respectively. For the fairness of the comparison, all the control inputs are less than 300.It is evident that the control performance of DRARLC improves progressively. Compared to ISMCbf10, DRARLC9000 demonstrates significantly better dynamic performance with lower cumulative error and control input. The table \ref{tab:control_compare} provides a comparative analysis based on data, where we assess their performance using three metrics:  Integral of Squared Error (ISE), cumulative control input(CC) and Settling time(ST).}
+
+\begin{rmk}
+    \hl{This concise summary effectively highlights the core findings: the proposed DRARLC framework ensures that the tracking error remains within the PSZ in both model-based and model-free scenarios, with numerical results showing that DRARLC9000 achieves a ISE of 81.10, significantly lower than ISMCbf10's 137.95, and a ST of 0.277, outperforming the baseline methods. The control input efficiency is also improved, with CC reduced to 2001.21 compared to 2023.22 in ISMCbf10.}
+\end{rmk}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Performance Comparison}
+    \label{tab:control_compare}
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Algorithm} & \textbf{ISE} & \textbf{CC} & \textbf{ST} \\
+        \hline
+        ISMCbf10   & 137.95 & 2023.22 & 0.612 \\
+        \hline
+        DRARLC1000 & 268.82 & 3213.19 & 0.87 \\
+        \hline
+        DRARLC5000 & 151.05 & 2499.25 & 0.273 \\
+        \hline
+        DRARLC9000 & 81.10 & 2001.21 & 0.277 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figs/performanceCompare.png}
+    \caption{Comparison of ISMCbf and DRARLC in Performance.}
+    \label{fig7}
+\end{figure}
+
+\section{Conclusion}
+
+\hl{The most critical finding of the paper is that the DISS guarantees system safety by transforming output constraints into bounded control inputs and enhances learning efficiency by compressing the exploration space, enabling deep reinforcement learning to focus on optimizing transient performance while maintaining safety constraints. This integration of safety guarantees and adaptive control demonstrates a novel approach for safe reinforcement learning in nonlinear system trajectory tracking.
+
+For future work, we plan to validate the DRARLC framework in real-world systems. Potential limitations include the need to tailor parameters and neural network architectures for different target systems, which may emerge as major challenges. Additionally, the impact of controller step size, feedback frequency, and other real-time constraints on control performance in practical implementations warrants in-depth discussion. These aspects will be critical for bridging the gap between simulation results and industrial applications, requiring systematic optimization of adaptive strategies for diverse operational scenarios.}
+
+%% The Appendices part is started with the command \appendix;
+%% appendix sections are then done as normal sections
+% \appendix
+% \section{Example Appendix Section}
+% \label{app1}
+
+% Appendix text.
+
+%% For citations use: 
+%%       \citet{<label>} ==> Lamport [21]
+%%       \citep{<label>} ==> [21]
+%%
+% Example citation, See \citet{lamport94}.
+
+%% If you have bib database file and want bibtex to generate the
+%% bibitems, please use
+%%
+ \bibliographystyle{elsarticle-num-names} 
+ \bibliography{reference}
+
+
+\end{thebibliography}
+\end{document}
+
+\endinput
+%%
+%% End of file `elsarticle-template-num-names.tex'.

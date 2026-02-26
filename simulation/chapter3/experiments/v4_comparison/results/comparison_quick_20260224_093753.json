@@ -1,0 +1,134 @@
+{
+  "Easy_20s": {
+    "Baseline_V4_Optimized": {
+      "constant": {
+        "ise_per_step": 1.3629264746565272e-06,
+        "ise_per_step_std": 6.191715576543585e-07
+      },
+      "sinusoidal": {
+        "ise_per_step": 0.0008816544466756924,
+        "ise_per_step_std": 0.00031179246553697087
+      },
+      "sinusoidal_small": {
+        "ise_per_step": 0.00045937462920212657,
+        "ise_per_step_std": 6.700236516084825e-05
+      }
+    },
+    "Original_V4_Improved": {
+      "constant": {
+        "ise_per_step": 1.3024988692987481e-06,
+        "ise_per_step_std": 4.732006097021893e-07
+      },
+      "sinusoidal": {
+        "ise_per_step": 0.0009327583167129112,
+        "ise_per_step_std": 0.00026667918872133
+      },
+      "sinusoidal_small": {
+        "ise_per_step": 0.00045676468044128304,
+        "ise_per_step_std": 6.294169574113534e-05
+      }
+    },
+    "Variant1_Relaxed": {
+      "constant": {
+        "ise_per_step": 1.2459892443732435e-06,
+        "ise_per_step_std": 4.279333863639908e-07
+      },
+      "sinusoidal": {
+        "ise_per_step": 0.0012435627080287443,
+        "ise_per_step_std": 6.378771162108383e-05
+      },
+      "sinusoidal_small": {
+        "ise_per_step": 0.0007951697220211938,
+        "ise_per_step_std": 8.042886429048161e-05
+      }
+    }
+  },
+  "Medium_30s": {
+    "Baseline_V4_Optimized": {
+      "constant": {
+        "ise_per_step": 1.050717038914318e-06,
+        "ise_per_step_std": 2.485500691844578e-07
+      },
+      "sinusoidal": {
+        "ise_per_step": 0.000932664415024855,
+        "ise_per_step_std": 0.0002794319332293213
+      },
+      "sinusoidal_small": {
+        "ise_per_step": 0.00044697220482694963,
+        "ise_per_step_std": 5.903430865236851e-05
+      }
+    },
+    "Original_V4_Improved": {
+      "constant": {
+        "ise_per_step": 1.0428382361095635e-06,
+        "ise_per_step_std": 2.673674763550116e-07
+      },
+      "sinusoidal": {
+        "ise_per_step": 0.0009286941987150791,
+        "ise_per_step_std": 0.00026782851520202726
+      },
+      "sinusoidal_small": {
+        "ise_per_step": 0.00047119175838987275,
+        "ise_per_step_std": 6.310863759000536e-05
+      }
+    },
+    "Variant1_Relaxed": {
+      "constant": {
+        "ise_per_step": 1.0612740916355716e-06,
+        "ise_per_step_std": 2.920465120988558e-07
+      },
+      "sinusoidal": {
+        "ise_per_step": 0.0012871373219991245,
+        "ise_per_step_std": 4.351172129222391e-05
+      },
+      "sinusoidal_small": {
+        "ise_per_step": 0.0007742207114626688,
+        "ise_per_step_std": 5.626973570893561e-05
+      }
+    }
+  },
+  "Hard_40s": {
+    "Baseline_V4_Optimized": {
+      "constant": {
+        "ise_per_step": 9.720781085888437e-07,
+        "ise_per_step_std": 1.9860520817204614e-07
+      },
+      "sinusoidal": {
+        "ise_per_step": 0.0009295104040878923,
+        "ise_per_step_std": 0.00027107598723054624
+      },
+      "sinusoidal_small": {
+        "ise_per_step": 0.00044552476671223134,
+        "ise_per_step_std": 6.558281559801717e-05
+      }
+    },
+    "Original_V4_Improved": {
+      "constant": {
+        "ise_per_step": 9.454687971350576e-07,
+        "ise_per_step_std": 1.8673445418864323e-07
+      },
+      "sinusoidal": {
+        "ise_per_step": 0.0009381055886520364,
+        "ise_per_step_std": 0.0002752972152758735
+      },
+      "sinusoidal_small": {
+        "ise_per_step": 0.0004633951488242566,
+        "ise_per_step_std": 8.300734912686715e-05
+      }
+    },
+    "Variant1_Relaxed": {
+      "constant": {
+        "ise_per_step": 9.285135809012153e-07,
+        "ise_per_step_std": 1.6156955402348e-07
+      },
+      "sinusoidal": {
+        "ise_per_step": 0.001292002058192118,
+        "ise_per_step_std": 3.2914442531757716e-05
+      },
+      "sinusoidal_small": {
+        "ise_per_step": 0.0007757109436295747,
+        "ise_per_step_std": 9.274429224283203e-06
+      }
+    }
+  }
+}
