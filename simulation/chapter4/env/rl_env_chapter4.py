@@ -23,7 +23,7 @@ from typing import Tuple, Dict
 
 from platform_dynamics import ParallelPlatform3DOF
 from wave_disturbance import WaveDisturbance
-from eso_controller import MultiDOFESO, HardSwitchController, PerformanceFunction
+from eso_controller import STESO, MultiDOFSTESO, MultiDOFESO, HardSwitchController, PerformanceFunction
 
 
 class PlatformRLEnvChapter4(gym.Env):
@@ -39,14 +39,18 @@ class PlatformRLEnvChapter4(gym.Env):
     def __init__(self,
                  use_model_compensation: bool = True,
                  use_eso: bool = True,
+                 use_steso: bool = True,
                  use_hard_switch: bool = True,
-                 dt: float = 0.01,
+                 dt: float = 0.002,
                  max_episode_steps: int = 5000,
                  Hs: float = 2.0,
                  T1: float = 8.0,
                  q_des_type: str = 'sinusoidal',
                  diverge_threshold: float = 0.9,
                  eso_omega: float = 20.0,
+                 steso_lambda1: float = 4.0,
+                 steso_beta1: float = 12.0,
+                 steso_beta2: float = 30.0,
                  switch_threshold: float = 0.6,
                  switch_beta: float = 0.5):
         super().__init__()
@@ -54,6 +58,7 @@ class PlatformRLEnvChapter4(gym.Env):
         # 控制选项
         self.use_model_compensation = use_model_compensation
         self.use_eso = use_eso
+        self.use_steso = use_steso
         self.use_hard_switch = use_hard_switch
         
         # 仿真参数
@@ -64,7 +69,7 @@ class PlatformRLEnvChapter4(gym.Env):
         
         # 平台和扰动
         self.platform = ParallelPlatform3DOF(dt=dt)
-        self.wave = WaveDisturbance(Hs=Hs, T1=T1, random_seed=None)
+        self.wave = WaveDisturbance(Hs=Hs, T1=T1, wave_heading=45.0, random_seed=None)
         
         # 维度
         self.state_dim = 9
@@ -100,6 +105,16 @@ class PlatformRLEnvChapter4(gym.Env):
         # ====== 新增: ESO ======
         if self.use_eso:
             self.eso = MultiDOFESO(dt=dt, omega_o=eso_omega)
+
+        # ====== 新增: STESO ======
+        if self.use_steso:
+            self.steso = STESO(
+                dim=3,
+                lambda1=steso_lambda1,
+                beta1=steso_beta1,
+                beta2=steso_beta2,
+                dt=dt,
+            )
         
         # ====== 新增: 硬切换 ======
         if self.use_hard_switch:
@@ -107,9 +122,21 @@ class PlatformRLEnvChapter4(gym.Env):
                 threshold=switch_threshold,
                 beta=switch_beta,
                 kp=24.0,
-                kd=2.5
+                kd=2.5,
+                center_ratio=0.5,
             )
-            self.perf_func = PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5)
+            # 漏斗型安全区域：每个维度都有自己的 funnel（upper/lower 两条性能函数）
+            # 目前按“对称漏斗”的安全边界处理：ρ_i(t)=min(ρ_upper_i(t), ρ_lower_i(t))
+            self.perf_funcs_upper = {
+                'z': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
+                'alpha': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
+                'beta': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
+            }
+            self.perf_funcs_lower = {
+                'z': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
+                'alpha': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
+                'beta': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
+            }
         
         # 状态变量
         self.q = None
@@ -125,7 +152,10 @@ class PlatformRLEnvChapter4(gym.Env):
         self.history = {
             'time': [], 'q': [], 'qd': [], 'q_des': [], 'u': [],
             'v_RL': [], 'tau_model': [], 'reward': [], 'ise': [],
-            'eso_disturbance': [], 'region': []  # 新增
+            'eso_disturbance': [],
+            'steso_disturbance': [],
+            'wave_disturbance': [],
+            'region': []  # 新增
         }
     
     def _get_desired_trajectory(self, t: float) -> Tuple[np.ndarray, np.ndarray]:
@@ -204,22 +234,31 @@ class PlatformRLEnvChapter4(gym.Env):
         
         self.q_des, self.qd_des = self._get_desired_trajectory(0)
         
-        self.wave = WaveDisturbance(Hs=self.wave.Hs, T1=self.wave.T1, random_seed=None)
+        self.wave = WaveDisturbance(Hs=self.wave.Hs, T1=self.wave.T1, wave_heading=self.wave.wave_heading, random_seed=None)
         
         # ====== 重置ESO ======
         if self.use_eso:
             self.eso.reset()
+
+        # ====== 重置STESO ======
+        if self.use_steso:
+            self.steso.reset()
         
         # ====== 重置硬切换 ======
         if self.use_hard_switch:
             self.hsc.current_region = 'center'
-            self.perf_func.reset()
+            for pf in self.perf_funcs_upper.values():
+                pf.reset()
+            for pf in self.perf_funcs_lower.values():
+                pf.reset()
         
         self.history = {
             'time': [], 'q': [], 'qd': [], 'q_des': [], 'u': [],
             'v_RL': [], 'tau_model': [], 'reward': [], 'ise': [],
             'eso_disturbance': [], 'region': [],
+            'steso_disturbance': [],
             'actual_disturbance': []  # 实际总扰动
+            , 'wave_disturbance': []
         }
         
         return self._normalize_state(self.q, self.qd, self.q_des)
@@ -239,12 +278,23 @@ class PlatformRLEnvChapter4(gym.Env):
             _, d_est = self.eso.update(self.q, v_RL)
         else:
             d_est = np.zeros(3)
+
+        # STESO将在动力学更新后计算（需要M_inv与名义加速度）
+        d_steso = np.zeros(3)
         
         # ====== 硬切换控制 ======
         if self.use_hard_switch:
             # 更新性能函数
-            self.perf_func.update(self.dt)
-            rho = self.perf_func.get_rho()
+            for pf in self.perf_funcs_upper.values():
+                pf.update(self.dt)
+            for pf in self.perf_funcs_lower.values():
+                pf.update(self.dt)
+
+            # 逐维漏斗边界：ρ_i(t)=min(ρ_upper_i(t), ρ_lower_i(t))
+            rho_z = min(self.perf_funcs_upper['z'].get_rho(), self.perf_funcs_lower['z'].get_rho())
+            rho_alpha = min(self.perf_funcs_upper['alpha'].get_rho(), self.perf_funcs_lower['alpha'].get_rho())
+            rho_beta = min(self.perf_funcs_upper['beta'].get_rho(), self.perf_funcs_lower['beta'].get_rho())
+            rho_vec = np.array([rho_z, rho_alpha, rho_beta], dtype=np.float64)
             
             # 计算硬切换控制
             u_comp = self._compute_model_compensation(
@@ -252,7 +302,7 @@ class PlatformRLEnvChapter4(gym.Env):
             )
             
             # 硬切换: 使用误差和ESO估计
-            u_legs = self.hsc.compute_control(e, ed, v_RL, u_comp)
+            u_legs = self.hsc.compute_control(e, ed, v_RL, u_comp, rho=rho_vec)
             
             region = self.hsc.get_region()
         else:
@@ -268,19 +318,34 @@ class PlatformRLEnvChapter4(gym.Env):
             np.array([self.episode_time])
         )[0]
         
+        # ====== STESO: 更新扰动估计 (在动力学更新之前) ======
+        M = self.platform.mass_matrix(self.q)
+        M_inv = np.linalg.inv(M)
+        
+        if self.use_steso:
+            # STESO 输出是加速度层面，需要转换为力层面 (M @ X_hat)
+            d_steso_acc = self.steso.update(
+                q=self.q,
+                qd=self.qd,
+                tau=v_RL,
+                H=M_inv,
+                q_des=self.q_des,
+                qd_des=self.qd_des,
+            )
+            d_steso = M @ d_steso_acc  # 转换到力层面
+        else:
+            d_steso = np.zeros(3)
+        
         # 保存更新前的速度，用于计算实际扰动
         qd_before = self.qd.copy()
         qdd = self.platform.forward_dynamics(self.q, self.qd, u_legs)
-        M = self.platform.mass_matrix(self.q)
-        M_inv = np.linalg.inv(M)
         qdd_disturbed = qdd + M_inv @ disturbance
+        # qdd_disturbed = M_inv @ disturbance
         self.qd = self.qd + qdd_disturbed * self.dt
         self.q = self.q + self.qd * self.dt
-        # d_actual = M * qdd_actual + C * qd + G - u
-        qdd_actual = (self.qd - qd_before) / self.dt  # 实际加速度
-        C = self.platform.coriolis_matrix(self.q, self.qd)
-        G = self.platform.gravity_vector(self.q)
-        d_actual = M @ qdd_actual + C @ qd_before + G - u_legs  # 实际总扰动
+        
+        # 计算实际外部扰动 (力层面) - 和海浪扰动同一级别
+        d_actual = disturbance
         
         # 更新累积误差
         e = self.q - self.q_des
@@ -315,8 +380,9 @@ class PlatformRLEnvChapter4(gym.Env):
         self.history['reward'].append(reward)
         self.history['ise'].append(ise)
         self.history['eso_disturbance'].append(d_est.copy())
+        self.history['steso_disturbance'].append(d_steso.copy())
         self.history['actual_disturbance'].append(d_actual.copy())
-        self.history['region'].append(region)
+        self.history['wave_disturbance'].append(disturbance.copy())
         self.history['region'].append(region)
         
         info = {

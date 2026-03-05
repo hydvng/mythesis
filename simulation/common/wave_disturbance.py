@@ -12,6 +12,8 @@
 """
 
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 from scipy.io import loadmat
 from scipy.interpolate import RegularGridInterpolator
 from typing import Dict, Optional, Union
@@ -59,7 +61,12 @@ class WaveDisturbance:
                  use_directional_spectrum: bool = False,
                  n_directions: int = 9,
                  spreading_exponent: int = 2,
-                 random_seed: Optional[int] = None):
+                 random_seed: Optional[int] = None,
+                 enable_burst_step: bool = False,
+                 step_t0: float = 15.0,
+                 step_duration: Optional[float] = 0.3,
+                 step_amplitude: Optional[Union[np.ndarray, list, tuple]] = None,
+                 step_ramp_time: float = 0.03):
         """
         初始化扰动模型
         
@@ -83,17 +90,46 @@ class WaveDisturbance:
         self.n_directions = n_directions if use_directional_spectrum else 1
         self.spreading_exponent = spreading_exponent
         self.rng = np.random.default_rng(random_seed)
-        
-        # 平台物理参数 (质量×10，尺寸×2，惯性矩×40)
-        if platform_params is None:
-            self.platform = {
-                'm': 347.54,
-                'Ixx': 60.64,
-                'Iyy': 115.4,
-                'r': 0.58
-            }
+
+        # Optional: burst step disturbance (time-domain additive term)
+        # This is useful to emulate sudden impacts / payload shift / actuator fault etc.
+        self.enable_burst_step = bool(enable_burst_step)
+        self.step_t0 = float(step_t0)
+        self.step_duration = None if step_duration is None else float(step_duration)
+        self.step_ramp_time = float(step_ramp_time)
+        if step_amplitude is None:
+            # Default (3-cylinder-friendly): a modest landing-like transient.
+            # Note: for 3 cylinders × 5000 N, the theoretical sum is 15 kN, but geometry
+            # and attitude allocation reduce the usable Z-force. Keep defaults conservative.
+            self.step_amplitude = np.array([3000.0, 150.0, 150.0], dtype=float)
         else:
-            self.platform = platform_params
+            self.step_amplitude = np.asarray(step_amplitude, dtype=float).flatten()[:3]
+
+        # Platform physical parameters.
+        # Keep this interface consistent with `simulation/common/platform_dynamics.py`.
+        # Required/used by the disturbance synthesis:
+        #   - m, Ixx, Iyy
+        # Optional (for completeness / future extension):
+        #   - Izz, r
+        default_platform = {
+            'm': 347.54,
+            'Ixx': 60.64,
+            'Iyy': 115.4,
+            'Izz': 80.0,
+            'r': 0.58,
+        }
+
+        if platform_params is None:
+            self.platform = default_platform
+        else:
+            # Accept common aliases and merge onto defaults to be robust to partial dicts.
+            normalized = dict(platform_params)
+            if 'm_platform' in normalized and 'm' not in normalized:
+                normalized['m'] = normalized['m_platform']
+            if 'r_platform' in normalized and 'r' not in normalized:
+                normalized['r'] = normalized['r_platform']
+
+            self.platform = {**default_platform, **normalized}
         
         # 波向角 (转换为弧度)
         self.wave_heading = np.deg2rad(wave_heading)
@@ -104,6 +140,231 @@ class WaveDisturbance:
         
         # 预计算
         self._precompute()
+
+    @staticmethod
+    def landing_uav_500kg_preset(
+        t0: float = 15.0,
+        v_sink: float = 0.5,
+        impact_duration: float = 0.25,
+        ramp_time: float = 0.06,
+        eccentricity_x: float = 0.0,
+        eccentricity_y: float = 0.0,
+        safety_utilization: float = 0.7,
+        per_cylinder_force_limit: float = 5000.0,
+        n_cylinders: int = 3,
+        z_effective_factor: float = 0.5,
+        g: float = 9.81,
+        mass_uav: float = 500.0,
+    ) -> Dict[str, float]:
+        """Engineering preset for a 500 kg UAV touchdown equivalent disturbance.
+
+        Returns a dict that can be passed into WaveDisturbance(...):
+            enable_burst_step, step_t0, step_duration, step_ramp_time, step_amplitude
+
+                Model:
+                    - After touchdown (t>=t0), apply a sustained static load: F_static = m*g
+                    - Add a short impact increment on top: ΔF = m*(v/Δt)
+                    - Convert eccentric touchdown into roll/pitch moments: M_alpha=e_y*Fz, M_beta=e_x*Fz
+                    - Apply conservative clipping based on actuator force limits.
+        """
+        # Decompose into sustained static load + short impact increment
+        impact_duration = max(1e-3, float(impact_duration))
+        v_sink = max(0.0, float(v_sink))
+        F_static = mass_uav * g
+        dF_impact = mass_uav * (v_sink / impact_duration)
+
+        # Conservative available Z-force budget (continuous)
+        Fz_cap = (
+            float(n_cylinders)
+            * float(per_cylinder_force_limit)
+            * float(z_effective_factor)
+            * float(safety_utilization)
+        )
+
+        # Clamp static first, then remaining headroom for impact increment
+        F_static_clamped = float(np.clip(F_static, 0.0, Fz_cap))
+        remaining = max(0.0, Fz_cap - F_static_clamped)
+        dF_impact_clamped = float(np.clip(dF_impact, 0.0, remaining))
+
+        # Total peak during impact
+        F_peak = F_static_clamped + dF_impact_clamped
+
+        # Moments from eccentricity (sign per right-hand rule conventions in your model)
+        M_alpha_static = float(eccentricity_y) * F_static_clamped
+        M_beta_static = float(eccentricity_x) * F_static_clamped
+        M_alpha_peak = float(eccentricity_y) * F_peak
+        M_beta_peak = float(eccentricity_x) * F_peak
+
+        # Return both: sustained static step + short impact increment.
+        # Encoding strategy:
+        #   - Use burst-step for the short impact increment (ΔF, ΔM)
+        #   - The sustained static component is reported so the caller can add as a post-touchdown step.
+
+        return {
+            'enable_burst_step': True,
+            'step_t0': float(t0),
+            'step_duration': float(impact_duration),
+            'step_ramp_time': float(ramp_time),
+            'step_amplitude': np.array(
+                [dF_impact_clamped,
+                 (M_alpha_peak - M_alpha_static),
+                 (M_beta_peak - M_beta_static)],
+                dtype=float,
+            ),
+            'static_after_touchdown': np.array(
+                [F_static_clamped, M_alpha_static, M_beta_static],
+                dtype=float,
+            ),
+            'cap_info': {
+                'Fz_cap': float(Fz_cap),
+                'F_static_raw': float(F_static),
+                'dF_impact_raw': float(dF_impact),
+                'F_static': float(F_static_clamped),
+                'dF_impact': float(dF_impact_clamped),
+                'F_peak': float(F_peak),
+            }
+        }
+
+    def plot_uav_landing_disturbance_demo(
+        self,
+        mass_uav: float = 500.0,
+        v_sink: float = 0.5,
+        impact_duration: float = 0.25,
+        ramp_time: float = 0.06,
+        eccentricity_x: float = 0.0,
+        eccentricity_y: float = 0.0,
+        t_end: float = 30.0,
+        dt: float = 0.01,
+        t0: float = 15.0,
+        overlay_wave: bool = False,
+        save_name: str = 'uav_500kg_landing_disturbance.png',
+    ):
+        """Generate a standalone figure showing the (equivalent) UAV landing disturbance."""
+        import matplotlib.pyplot as plt
+
+        # Build preset then evaluate on a fresh time grid
+        preset = self.landing_uav_500kg_preset(
+            t0=t0,
+            v_sink=v_sink,
+            impact_duration=impact_duration,
+            ramp_time=ramp_time,
+            eccentricity_x=eccentricity_x,
+            eccentricity_y=eccentricity_y,
+            mass_uav=mass_uav,
+        )
+
+        static_after = np.asarray(preset.get('static_after_touchdown', np.zeros(3)), dtype=float).reshape(1, 3)
+        cap_info = preset.get('cap_info', {})
+
+        t = np.arange(0.0, float(t_end) + 1e-12, float(dt))
+        # Temporarily enable step for plotting
+        old = (self.enable_burst_step, self.step_t0, self.step_duration, self.step_ramp_time, self.step_amplitude.copy())
+        self.enable_burst_step = True
+        self.step_t0 = preset['step_t0']
+        self.step_duration = preset['step_duration']
+        self.step_ramp_time = preset['step_ramp_time']
+        self.step_amplitude = np.asarray(preset['step_amplitude'], dtype=float)
+
+        step_u = self._burst_step_profile(t)
+
+        # Sustained static load after touchdown (t>=t0)
+        static_gate = (t >= float(t0)).astype(float).reshape(-1, 1)
+        static_u = static_gate * static_after
+
+        landing_u = static_u + step_u
+
+        if overlay_wave:
+            wave_u = self.generate_disturbance(t)
+            total_u = wave_u + landing_u
+        else:
+            wave_u = None
+            total_u = landing_u
+
+        # Restore
+        self.enable_burst_step, self.step_t0, self.step_duration, self.step_ramp_time, self.step_amplitude = old
+
+        fig, axes = plt.subplots(3, 1, figsize=(10, 7.5), sharex=True)
+        labels = ['Fz (N)', 'M_alpha (N·m)', 'M_beta (N·m)']
+        colors = ['tab:blue', 'tab:orange', 'tab:green']
+
+        title = (
+            f"UAV touchdown + stay-on-deck load (m={mass_uav:.0f} kg, e=({eccentricity_x*1000:.0f}mm,{eccentricity_y*1000:.0f}mm), "
+            f"v_sink={v_sink:.2f} m/s, impact={impact_duration:.2f} s)"
+        )
+        fig.suptitle(title)
+
+        for i, ax in enumerate(axes):
+            ax.plot(t, static_u[:, i], color=colors[i], lw=1.8, label='Static after touchdown')
+            ax.plot(t, step_u[:, i], color=colors[i], lw=1.2, ls='--', label='Impact increment')
+            ax.plot(t, landing_u[:, i], color=colors[i], lw=2.2, label='Landing total (static+impact)')
+            if overlay_wave and wave_u is not None:
+                ax.plot(t, wave_u[:, i], color='0.6', lw=1, label='Wave only')
+                ax.plot(t, total_u[:, i], color='k', lw=1.5, label='Wave + landing')
+            ax.axvline(t0, color='0.3', ls='--', lw=1)
+            ax.set_ylabel(labels[i])
+            ax.grid(True, alpha=0.3)
+            ax.legend(loc='upper right', fontsize=9)
+
+        # Add a short text box with force clipping info (Fz channel only)
+        if isinstance(cap_info, dict) and cap_info:
+            txt = (
+                f"Fz_cap≈{cap_info.get('Fz_cap', 0.0):.0f} N\n"
+                f"F_static={cap_info.get('F_static', 0.0):.0f} N\n"
+                f"ΔF_impact={cap_info.get('dF_impact', 0.0):.0f} N\n"
+                f"F_peak={cap_info.get('F_peak', 0.0):.0f} N"
+            )
+            axes[0].text(
+                0.02, 0.95, txt,
+                transform=axes[0].transAxes,
+                va='top', ha='left',
+                fontsize=9,
+                bbox=dict(boxstyle='round', facecolor='white', alpha=0.85, edgecolor='0.7')
+            )
+
+        axes[-1].set_xlabel('Time (s)')
+
+        module_dir = os.path.dirname(os.path.abspath(__file__))
+        fig_dir = os.path.join(module_dir, 'figures')
+        os.makedirs(fig_dir, exist_ok=True)
+        out_path = os.path.join(fig_dir, save_name)
+        fig.tight_layout(rect=[0, 0, 1, 0.95])
+        fig.savefig(out_path, dpi=200)
+        plt.close(fig)
+
+        print(f"\n✅ UAV landing disturbance figure saved: {out_path}")
+
+    def _burst_step_profile(self, t: np.ndarray) -> np.ndarray:
+        """Return a (len(t), 3) additive burst step disturbance.
+
+        A smooth ramp is used around the step onset/offset to avoid numerical artifacts
+        (when step_ramp_time > 0).
+        """
+        t = np.asarray(t, dtype=float)
+        u = np.zeros((len(t), 3), dtype=float)
+        if (not self.enable_burst_step) or len(t) == 0:
+            return u
+
+        t0 = self.step_t0
+        t1 = np.inf if self.step_duration is None else (t0 + self.step_duration)
+        A = self.step_amplitude.reshape(1, 3)
+
+        # Ideal gate
+        gate = ((t >= t0) & (t <= t1)).astype(float)
+
+        # Optional smoothing (linear ramps)
+        tr = max(0.0, self.step_ramp_time)
+        if tr > 0:
+            # on-ramp
+            w_on = np.clip((t - t0) / tr, 0.0, 1.0)
+            # off-ramp
+            if np.isfinite(t1):
+                w_off = np.clip((t1 - t) / tr, 0.0, 1.0)
+                gate = np.minimum(w_on, w_off)
+            else:
+                gate = w_on
+
+        u = gate.reshape(-1, 1) * A
+        return u
     
     def _load_mss_rao(self, filename: str):
         """加载MSS运动RAO数据"""
@@ -302,8 +563,64 @@ class WaveDisturbance:
                     F += F_k * np.cos(omega_k * t + self.phases[k])
                 
                 disturbance[:, i] = F
+
+        # Add optional burst step disturbance
+        if self.enable_burst_step:
+            disturbance = disturbance + self._burst_step_profile(t)
         
         return disturbance
+
+    def plot_burst_step_demo(self,
+                             t_duration: float = 30.0,
+                             dt: float = 0.01,
+                             save_name: str = 'wave_with_burst_step.png'):
+        """Plot a time-domain demo: wave disturbance + burst step."""
+        import matplotlib.pyplot as plt
+
+        t = np.arange(0.0, float(t_duration) + 1e-12, float(dt))
+
+        # Wave only
+        wave_only = WaveDisturbance(
+            Hs=self.Hs,
+            T1=self.T1,
+            platform_params=self.platform,
+            vessel_file='supply.mat',
+            wave_heading=np.degrees(self.wave_heading),
+            vessel_speed=self.vessel_speed_idx,
+            n_components=self.n_components,
+            use_directional_spectrum=self.use_directional_spectrum,
+            n_directions=self.n_directions,
+            spreading_exponent=self.spreading_exponent,
+            random_seed=42,
+            enable_burst_step=False,
+        )
+
+        d_wave = wave_only.generate_disturbance(t)
+        d_step = self.generate_disturbance(t)
+
+        fig, axes = plt.subplots(3, 1, figsize=(12, 8), sharex=True)
+        titles = ['Fz (N)', 'Mα (N·m)', 'Mβ (N·m)']
+        for i in range(3):
+            axes[i].plot(t, d_wave[:, i], label='Wave only', linewidth=1.2, alpha=0.8)
+            axes[i].plot(t, d_step[:, i], label='Wave + burst step', linewidth=1.4, alpha=0.9)
+            axes[i].set_ylabel(titles[i])
+            axes[i].grid(True, alpha=0.3)
+            # Mark step start/end
+            axes[i].axvline(self.step_t0, color='k', linestyle='--', linewidth=1.0, alpha=0.6)
+            if self.step_duration is not None:
+                axes[i].axvline(self.step_t0 + self.step_duration, color='k', linestyle='--', linewidth=1.0, alpha=0.6)
+        axes[0].legend(loc='upper right', fontsize=9)
+        axes[-1].set_xlabel('Time (s)')
+
+        plt.suptitle('Wave Disturbance with a Burst Step Event', fontweight='bold')
+        plt.tight_layout()
+
+        module_dir = os.path.dirname(os.path.abspath(__file__))
+        figures_dir = os.path.join(module_dir, 'figures')
+        os.makedirs(figures_dir, exist_ok=True)
+        save_path = os.path.join(figures_dir, save_name)
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        print(f"\n✅ Burst-step disturbance demo figure saved: {save_path}")
     
     def get_rao_curve(self):
         """获取RAO曲线（用于绘图）"""
@@ -332,11 +649,22 @@ class WaveDisturbance:
         print(f"\n【频率 ω = {omega_k:.2f} rad/s 处的物理量】\n")
         
         # 波幅
-        A_k = np.sqrt(2.0 * self.S[k_demo] * self.domega)
-        print(f"1. 波幅 A = {A_k:.3f} m")
+        # In directional-spectrum mode, S[k] is an array over directions.
+        # For a concise scalar printout we use the integrated spectrum over directions.
+        if self.use_directional_spectrum:
+            S_k = float(np.sum(self.S[k_demo]))
+        else:
+            S_k = float(self.S[k_demo])
+        A_k = np.sqrt(2.0 * S_k * self.domega)
+        print(f"1. Wave amplitude A = {A_k:.3f} m (equivalent, integrated over directions)")
         
         for dof in ['Fz', 'M_alpha', 'M_beta']:
-            RAO = self.RAO[dof][k_demo]
+            # NOTE: RAO is directional in this implementation.
+            #  - single-direction mode: shape (n_components, 1)
+            #  - directional spectrum: shape (n_components, n_directions)
+            # For this physics printout, we display the first direction component.
+            RAO_k = self.RAO[dof][k_demo]
+            RAO = float(np.atleast_1d(RAO_k).ravel()[0])
             inertia = self.platform['m'] if dof == 'Fz' else \
                      (self.platform['Ixx'] if dof == 'M_alpha' else self.platform['Iyy'])
             unit = 'N' if dof == 'Fz' else 'N·m'
@@ -395,6 +723,9 @@ class WaveDisturbance:
                 platform_params=self.platform,
                 vessel_file='supply.mat',
                 wave_heading=h_deg,
+                use_directional_spectrum=self.use_directional_spectrum,
+                n_directions=self.n_directions,
+                spreading_exponent=self.spreading_exponent,
                 random_seed=42
             )
             
@@ -407,13 +738,13 @@ class WaveDisturbance:
             
             # 工况名称
             if h_deg == 0:
-                condition = "随浪"
+                condition = "Following seas"
             elif h_deg == 90:
-                condition = "横浪"
+                condition = "Beam seas"
             elif h_deg == 180:
-                condition = "迎浪"
+                condition = "Head seas"
             else:
-                condition = f"斜浪{h_deg}°"
+                condition = f"Quartering seas ({h_deg}°)"
             
             results[h_deg] = {
                 'Fz_std': Fz_std,
@@ -484,7 +815,8 @@ class WaveDisturbance:
             Fz_values = [results[h]['Fz_std'] for h in headings]
             Ma_values = [results[h]['M_alpha_std'] for h in headings]
             Mb_values = [results[h]['M_beta_std'] for h in headings]
-            labels = [f"{h}°\n({results[h]['condition']})" for h in headings]
+            # Keep x-axis tidy: only show heading angles
+            labels = [f"{h}°" for h in headings]
             
             x = np.arange(len(headings))
             width = 0.6
@@ -518,12 +850,16 @@ class WaveDisturbance:
                         fontsize=14, fontweight='bold')
             plt.tight_layout()
             
-            save_path = '/home/haydn/Documents/AERAOFMINE/mythesis/simulation/common/wave_heading_comparison.png'
+            # Save next to this module: simulation/disturbance/figures/
+            module_dir = os.path.dirname(os.path.abspath(__file__))
+            figures_dir = os.path.join(module_dir, 'figures')
+            os.makedirs(figures_dir, exist_ok=True)
+            save_path = os.path.join(figures_dir, 'wave_heading_comparison.png')
             plt.savefig(save_path, dpi=150, bbox_inches='tight')
-            print(f"\n✅ 浪向对比图已保存: {save_path}")
+            print(f"\n✅ Wave heading comparison figure saved: {save_path}")
             
         except Exception as e:
-            print(f"绘图失败: {e}")
+            print(f"Plotting failed: {e}")
 
 
 if __name__ == "__main__":
@@ -539,9 +875,28 @@ if __name__ == "__main__":
         T1=8.0,
         vessel_file='supply.mat',
         wave_heading=180.0,
+        use_directional_spectrum=True,
+        n_directions=9,
+        spreading_exponent=2,
         random_seed=42
     )
     wave.demonstrate_physics()
+
+    # Example 1b: 500 kg UAV landing equivalent disturbance (3-cylinder friendly)
+    # Plot the landing pulse alone, and optionally overlay wave disturbance for comparison.
+    wave.plot_uav_landing_disturbance_demo(
+        mass_uav=150.0,
+        v_sink=0.5,
+        impact_duration=0.25,
+        ramp_time=0.06,
+        eccentricity_x=0.05,
+        eccentricity_y=0.0,
+        t0=15.0,
+        t_end=30.0,
+        dt=0.01,
+        overlay_wave=True,
+        save_name='uav_150kg_landing_disturbance.png',
+    )
     
     # 示例2: 多浪向对比
     print("\n" + "="*70)
