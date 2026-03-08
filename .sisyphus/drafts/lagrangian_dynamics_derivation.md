@@ -96,13 +96,95 @@ R(\alpha,\beta) = \begin{bmatrix}
 \end{bmatrix}
 $$
 
-### 1.2 正运动学
+### 1.2 基座运动学（船体运动）
 
-动平台第 $i$ 个铰链在惯性系中的位置：
+基座中心 $B_0$ 固定在船上，随船体运动：
 
-$$P_i(q) = \begin{bmatrix}0 \\ 0 \\ z\end{bmatrix} + R(\alpha,\beta) \cdot p_{\text{local},i}$$
+**船体运动**（6自由度）：
+- $q_s = [x_s, y_s, z_s, \phi_s, \theta_s, \psi_s]^T$
+  - $[x_s, y_s, z_s]$：船体位置（平移）
+  - $[\phi_s, \theta_s, \psi_s]$：船体姿态（横滚、俯仰、偏航）
 
-其中 $q = [z, \alpha, \beta]^T$。
+**基座中心位置**：
+$$B_0(q_s) = \underbrace{B_{0,0}}_{\text{固定参考点}} + \underbrace{R_s(\phi_s, \theta_s, \psi_s) \cdot B_{0,\text{offset}}}_{\text{安装偏移}} + \underbrace{\begin{bmatrix}x_s \\ y_s \\ z_s\end{bmatrix}}_{\text{船体平移}}$$
+
+其中：
+- $B_{0,0}$：固定在码头/惯性系的参考点
+- $R_s(\phi_s, \theta_s, \psi_s)$：船体旋转矩阵（3个欧拉角）
+- $B_{0,\text{offset}}$：基座相对于船体重心的安装偏移向量
+- $[x_s, y_s, z_s]^T$：船体位置
+
+**简化为3自由度（只考虑横滚、俯仰、升沉）**：
+$$q_s = [z_s, \alpha_s, \beta_s]^T$$
+
+$$B_0(q_s) = B_{0,0} + \begin{bmatrix}0 \\ 0 \\ z_s\end{bmatrix} + R_s(\alpha_s, \beta_s) \cdot B_{0,\text{offset}}$$
+
+---
+
+## 1. 坐标定义
+
+### 1.1 广义坐标
+
+- **$q_s = [z_s, \alpha_s, \beta_s]^T$**：船体运动（下平台/基座相对于惯性系）
+- **$q_c = [z_c, \alpha_c, \beta_c]^T$**：平台控制量（上平台相对于下平台）
+- **$q = q_s + q_c$**：上平台相对于惯性系的总位移
+
+### 1.2 基座运动学（船体运动）
+
+**船体运动**（3自由度）：
+$$q_s = [z_s, \alpha_s, \beta_s]^T$$
+
+**基座中心位置**：
+$$B_0(q_s) = B_{0,0} + \begin{bmatrix}0 \\ 0 \\ z_s\end{bmatrix} + R_s(\alpha_s, \beta_s) \cdot B_{0,\text{offset}}$$
+
+其中 $R_s$ 是船体姿态旋转矩阵。
+
+---
+
+### 1.3 动平台运动学
+
+**控制量 $q_c$**：
+$$q_c = [z_c, \alpha_c, \beta_c]^T$$
+
+- $z_c$：上平台相对于下平台的升沉位移
+- $\alpha_c$：上平台相对于下平台的横滚角
+- $\beta_c$：上平台相对于下平台的俯仰角
+
+**关键**：$q_c$ 定义在**船体坐标系**下，其方向受船体扰动影响。
+
+**动平台中心位置**：
+
+$$P_0(q, q_s) = B_0(q_s) + R_s(\alpha_s, \beta_s) \cdot \begin{bmatrix}0 \\ 0 \\ z_c\end{bmatrix}$$
+
+解释：
+- $B_0(q_s)$：基座中心（受扰动）
+- $R_s(\alpha_s, \beta_s)$：将 $z_c$ 从船体坐标系转换到惯性系
+- $z_c$：相对位移大小
+
+**动平台姿态**：
+
+$$\alpha = \alpha_s + \alpha_c$$
+$$\beta = \beta_s + \beta_c$$
+
+即：
+$$R(\alpha, \beta) = R_s(\alpha_s, \beta_s) \cdot R_c(\alpha_c, \beta_c)$$
+
+**动平台铰链 $P_i$**：
+
+$$P_i(q, q_s) = P_0(q, q_s) + R(\alpha, \beta) \cdot p_{\text{local},i}$$
+
+其中 $p_{\text{local},i}$ 是铰链在平台坐标系中的位置。
+
+---
+
+### 1.4 总结
+
+**位置关系**：
+$$q = q_s + q_c$$
+
+**姿态关系**：
+$$\alpha = \alpha_s + \alpha_c$$
+$$\beta = \beta_s + \beta_c$$
 
 ---
 
@@ -204,6 +286,20 @@ $$J_{i,2} = e_i \cdot \frac{\partial P_i}{\partial \beta}$$
 
 ---
 
+### 3.4 基座雅可比矩阵 $J_B$（扰动贡献）
+
+基座位置 $B_i$ 随船体运动 $q_s = [z_s, \alpha_s, \beta_s]$ 变化：
+
+$$B_i(q_s) = B_{i,0} + R_s(\alpha_s, \beta_s) \cdot B_{i,\text{offset}}$$
+
+**基座雅可比**：
+$$\frac{\partial B_i}{\partial q_s}$$
+
+**链式法则**：杆长变化由动平台和基座共同决定：
+$$\frac{\partial l_i}{\partial q} = \frac{\partial \|P_i - B_i\|}{\partial q} = \frac{(P_i - B_i) \cdot (\partial P_i / \partial q - \partial B_i / \partial q)}{l_i}$$
+
+---
+
 ## 4. 动能推导
 
 ### 4.1 平台动能
@@ -228,83 +324,192 @@ M & 0 & 0 \\
 \end{bmatrix}
 $$
 
-#### 4.2 两段式主动杆构型
+### 4.2 两段式主动杆构型
 
 **系统构型**：3-UPS/PU 并联平台
 - 中间：PU 支路（被动，只起约束，无驱动力）
 - 外围 3 根：UPS 主动推杆（唯一驱动力）
 
 **每根主动杆为两段式伸缩结构**：
-- 上段（靠近平台）质量：$m_{\text{up}} = 9\ \text{kg}$
-- 下段（靠近基座）质量：$m_{\text{down}} = 16\ \text{kg}$
-- 单杆总质量：$m_i = m_{\text{up}} + m_{\text{down}} = 25\ \text{kg}$
+- 上段（靠近平台）质量：$m_u = 9\ \text{kg}$
+- 下段（靠近基座）质量：$m_d = 16\ \text{kg}$
+- 单杆总质量：$m_i = m_u + m_d = 25\ \text{kg}$
 
 ---
 
-**质心位置**（不再是中点）：
+**铰链位置**（在杆件中间）：
 
-$$P_{c,i} = \frac{m_{\text{down}} \cdot B_i + m_{\text{up}} \cdot P_i}{m_{\text{up}} + m_{\text{down}}} = \frac{16\,B_i + 9\,P_i}{25}$$
-
-**质心速度**：
-
-$$\dot P_{c,i} = \frac{9}{25}\,\dot P_i$$
+$$J = \frac{B + P}{2}$$
 
 ---
 
-**单根主动杆动能**：
+**下杆质心速度**（$m_d = 16$ kg）：
 
-$$
-T_{\text{rod},i} = \frac12 m_i \| \dot P_{c,i} \|^2
-= \frac12 \cdot 25 \cdot \left(\frac{9}{25}\right)^2 \|\dot P_i\|^2
-= \frac{81}{50}\, \|\dot P_i\|^2
-$$
-
-**等效质量**：写成统一格式 $T_{\text{rod},i} = \frac12 m_{\text{eq}} \|\dot P_i\|^2$
-
-$$m_{\text{eq}} = \frac{2 \cdot 81}{50} = \frac{81}{25} = 3.24\ \text{kg}$$
+$$\dot{B}_d = \frac{3\dot{B} + \dot{P}}{4}$$
 
 ---
 
-### 4.3 总质量矩阵
+**上杆质心速度**（$m_u = 9$ kg）：
+
+$$\dot{P}_u = \frac{\dot{B} + 3\dot{P}}{4}$$
+
+---
+
+**总动能** = 平动动能 + 转动动能
+
+### 4.2.1 平动动能
 
 $$
-M(q) = M_{\text{plate}} + \frac{81}{25}\,\sum_{i=1}^3 J_{P_i}^T J_{P_i}
+T_{\text{平动}} = \frac{m_d}{32}(9\dot{B}^T\dot{B} + 6\dot{B}^T\dot{P} + \dot{P}^T\dot{P}) + \frac{m_u}{32}(\dot{B}^T\dot{B} + 6\dot{B}^T\dot{P} + 9\dot{P}^T\dot{P})
 $$
 
-**与均匀杆对比**：
-- 均匀杆：$\frac14 m_i = \frac{25}{4} = 6.25$
-- 两段杆：$\frac{81}{25} = 3.24$
+整理：
 
-**注意**：当前代码实现中 $M(q)$ 只包含平台质量，未包含杆质量的贡献！
+$$
+T_{\text{平动}} = \frac{9m_d+m_u}{32}\dot{B}^T\dot{B} + \frac{6(m_d+m_u)}{32}\dot{B}^T\dot{P} + \frac{m_d+9m_u}{32}\dot{P}^T\dot{P}
+$$
+
+其中 $m_d=16, m_u=9$：
+- $A = \frac{9\times16+9}{32} = \frac{153}{32} = 4.78125$
+- $B = \frac{6\times25}{32} = \frac{150}{32} = 4.6875$
+- $C = \frac{16+9\times9}{32} = \frac{97}{32} = 3.03125$
+
+### 4.2.2 转动动能
+
+**几何关系**：
+- 上杆：长度 $l_u$，上铰点 $P$（动平台），下铰点 $J$（中间）
+- 下杆：长度 $l_d$，上铰点 $J$（中间），下铰点 $B$（基座，受船体扰动影响）
+
+**受扰动的基座运动**：
+基座 $B$ 随船体运动，引入扰动角度 $\alpha_s$（船体横滚）、$\beta_s$（船体俯仰）：
+$$B = B_0 + \text{扰动}(\alpha_s, \beta_s)$$
+
+---
+
+**角速度定义**：
+杆的方向向量：
+$$\mathbf{e} = \frac{P - B}{\|P - B\|} = \frac{P - B}{L}$$
+
+其中 $L = l_u + l_d$ 是总杆长。
+
+**角速度大小**：
+$$\omega = \|\dot{\mathbf{e}}\|$$
+
+**转动惯量**（细杆绕质心横向转动）：
+- 上杆长度 $l_u$：
+$$I_u = \frac{1}{12}m_u l_u^2$$
+- 下杆长度 $l_d$：
+$$I_d = \frac{1}{12}m_d l_d^2$$
+
+**转动动能**：
+$$T_{\text{rot}} = \frac12 I_u \omega_u^2 + \frac12 I_d \omega_d^2$$
+
+由于两段杆共线，角速度相同 $\omega_u = \omega_d = \|\dot{\mathbf{e}}\|$：
+$$T_{\text{rot}} = \frac12 \left(\frac{m_u l_u^2 + m_d l_d^2}{12}\right) \omega^2 = \frac{m_u l_u^2 + m_d l_d^2}{24} \|\dot{\mathbf{e}}\|^2$$
+
+---
+
+### 4.2.3 $||\dot{\mathbf{e}}||^2$ 的计算
+
+对 $\mathbf{e} = (P - B) / L$ 求导：
+$$\dot{\mathbf{e}} = \frac{\dot{P} - \dot{B}}{L} - \frac{(P - B)(\dot{P} - \dot{B})^\top (P - B)}{L^3}$$
+
+模长平方：
+$$\|\dot{\mathbf{e}}\|^2 = \frac{\|\dot{P} - \dot{B}\|^2 - \left(\mathbf{e}^\top (\dot{P} - \dot{B})\right)^2}{L^2}$$
+
+---
+
+### 4.2.4 完整动能（平动 + 转动）
+
+$$
+\boxed{
+\begin{aligned}
+T &= \frac{m_d}{32}\left\|3\dot{B}+\dot{P}\right\|^2
+   + \frac{m_u}{32}\left\|\dot{B}+3\dot{P}\right\|^2 \\[4pt]
+  &+ \frac{m_u l_u^2 + m_d l_d^2}{24} \cdot
+\frac{\|\dot{P}-\dot{B}\|^2 - \big[\mathbf{e}^\top(\dot{P}-\dot{B})\big]^2}{\|P-B\|^2}
+\end{aligned}
+}
+$$
+
+其中 $l_u$ 是上杆长度，$l_d$ 是下杆长度，$\dot{B}$ 包含船体扰动 $\alpha_s, \beta_s$ 的影响。
+
+---
+
+**重要**：基座 B 随船体运动，$\dot{B} \neq 0$，不能忽略！
+
+
 ---
 
 ## 5. 势能推导
 
-### 5.1 平台势能
+### 5.1 方案一：两段式杆件（上下质量不同）
 
-$$V_{\text{plate}} = M g z$$
+**杆件构型**：
+- 下杆（靠近基座）：$m_d = 16$ kg, 长度 $l_d$
+- 上杆（靠近平台）：$m_u = 9$ kg，长度 $l_u$
+- 杆长范围：完全收缩 $l_{min}$，完全伸长 $l_{max} $
 
-（$z$ 向下为正，重力势能降低）
+**定义**：
+- $e_i = \frac{P_i - B_i}{\|P_i - B_i\|}$：杆的方向向量（单位向量）
+- $l_i = \|P_i - B_i\|$：杆长
 
-### 5.2 杆势能
+**质心位置**（两段杆的质心都在各自杆的中点）：
+- 下杆质心：$C_{d,i} = B_i + e_i \cdot \frac{l_d}{2}$
+- 上杆质心：$C_{u,i} = P_i - e_i \cdot \frac{l_u}{2}$（从平台往下算）
 
-第 $i$ 根杆的质心高度：
+**质心高度**：
+- $z_{c,d,i} = z_{B_i} + e_{i,z} \cdot \frac{l_d}{2}$
+- $z_{c,u,i} = z_{P_i} - e_{i,z} \cdot \frac{l_u}{2}$
 
-$$z_{c,i} = \frac{16\, z_{B_i} + 9\, z_{P_i}}{25}$$
+**总势能**：
 
-杆势能：
+$$V = M g z + \sum_{i=1}^3 \left( m_d g \cdot z_{c,d,i} + m_u g \cdot z_{c,u,i} \right)$$
 
-$$V_{\text{rod},i} = m_i g \cdot z_{c,i} = 25g \cdot \frac{16\, z_{B_i} + 9\, z_{P_i}}{25} = g\left(16\,z_{B_i} + 9\,z_{P_i}\right)$$
+展开：
 
-### 5.3 总势能
+$$V = M g z + \sum_{i=1}^3 \left[ m_d g \cdot (z_{B_i} + e_{i,z} \frac{l_d}{2}) + m_u g \cdot (z_{P_i} - e_{i,z} \frac{l_u}{2}) \right]$$
 
-$$V = M g z + \sum_{i=1}^3 g\left(16\,z_{B_i} + 9\,z_{P_i}\right)$$
+由于 $l_d = l_i - l_u$：
 
-由于 $z_{B_i} = 0$（基座在 z=0 平面），简化为：
+$$V = M g z + \sum_{i=1}^3 \left[ (m_d + m_u) g \cdot z_{B_i} + m_u g \cdot z_{P_i} + g \cdot e_{i,z} \cdot \left( m_d \frac{l_i - l_u}{2} - m_u \frac{l_u}{2} \right) \right]$$
 
-$$V = M g z + 9g \sum_{i=1}^3 z_{P_i}$$
+整理：
 
-其中 $z_{P_i}$ 是 $P_i$ 的 z 坐标。
+$$V = M g z + \sum_{i=1}^3 \left[ 25 g \cdot z_{B_i} + 9 g \cdot z_{P_i} + g \cdot e_{i,z} \cdot \left( 16 \cdot \frac{l_i - l_u}{2} - 9 \cdot \frac{l_u}{2} \right) \right]$$
+
+最终：
+
+$$V = M g z + 9g \sum_{i=1}^3 z_{P_i} + 25g \sum_{i=1}^3 z_{B_i} + \frac{g}{2} \sum_{i=1}^3 e_{i,z} \cdot (16l_i - 25l_u)$$
+
+其中 $l_i = \|P_i - B_i\|$，$l_u$ 是上杆长度（常数）。
+
+### 5.2 方案二：均匀杆件（简化）
+
+**假设**：单杆质量均匀分布，$m_{rod} = 25$ kg，质心在杆件中点
+
+**约束关系**：杆长由运动学决定
+
+$$l_i = \|P_i - B_i\|$$
+
+**质心位置**（在杆件中点）：
+
+$$C_i = \frac{P_i + B_i}{2}$$
+
+**质心高度**：
+
+$$z_{c,i} = \frac{z_{P_i} + z_{B_i}}{2}$$
+
+注意：$z_{P_i}$ 和 $z_{B_i}$ 都是由运动学决定的函数。
+
+**总势能**：
+
+$$V = M g z + \sum_{i=1}^3 m_{rod} g \cdot \frac{z_{P_i} + z_{B_i}}{2}$$
+
+其中 $z_{P_i}$ 是动平台铰链的 z 坐标（由 q = [z, α, β] 决定），$z_{B_i}$ 是基座铰链的 z 坐标。
+
+**重要**：引入扰动以后 $z_{B_i}$ 是随船体运动变化的（不再是0）！
+
 ---
 
 ## 6. 拉格朗日方程
@@ -319,6 +524,23 @@ $$\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{q}}\right) - \frac{\partial 
 
 ### 6.3 展开
 
+质量矩阵 M 的完整形式（平台 + 杆件平动 + 杆件转动）：
+
+$$M = M_{\text{plate}} + M_{\text{rod,平动}} + M_{\text{rod,转动}}$$
+
+其中：
+
+**平台部分**：
+$$M_{\text{plate}} = \begin{bmatrix} M & 0 & 0 \\ 0 & I_{xx} & 0 \\ 0 & 0 & I_{yy}\cos^2\alpha + I_{zz}\sin^2\alpha \end{bmatrix}$$
+
+**杆件平动部分**（见4.2.1节）：
+$$M_{\text{rod,平动}} = \frac{97}{32} \sum_{i=1}^3 J_{P_i}^T J_{P_i}$$
+
+**杆件转动部分**：
+$$M_{\text{rod,转动}} = \sum_{i=1}^3 \frac{\partial e_i}{\partial q}^T I_{\text{杆},i} \frac{\partial e_i}{\partial q}$$
+
+其中 $e_i = (P_i - B_i)/l_i$ 是杆的方向向量。
+
 $$\frac{d}{dt}(M\dot{q}) - \frac12 \dot{q}^T \frac{\partial M}{\partial q} \dot{q} - \frac{\partial V}{\partial q} = \tau$$
 
 整理为标准形式：
@@ -327,7 +549,7 @@ $$M\ddot{q} + C\dot{q} + G = \tau$$
 
 其中：
 
-- $M$：质量矩阵
+- $M$：完整质量矩阵（含平台 + 杆件平动 + 杆件转动）
 - $C$：科里奥利/离心力矩阵（由 $M$ 求导得到）
 - $G = \partial V / \partial q$：重力向量
 - $\tau$：广义力
@@ -379,31 +601,31 @@ def compute_coriolis(M_func, q, qd):
 
 $$G_i = \frac{\partial V}{\partial q_i}$$
 
-### 8.2 平台重力项
+### 8.2 方案一：两段式杆件势能
 
-$$G_z = \frac{\partial (Mgz)}{\partial z} = Mg$$
+根据第5.1节的势能公式：
 
-$$G_\alpha = \frac{\partial (Mgz)}{\partial \alpha} = 0$$
+$$V = M g z + 9g \sum_{i=1}^3 z_{P_i} + 25g \sum_{i=1}^3 z_{B_i} + \frac{g}{2} \sum_{i=1}^3 e_{i,z} \cdot (16l_i - 25l_u)$$
 
-$$G_\beta = \frac{\partial (Mgz)}{\partial \beta} = 0$$
+其中 $l_i = \|P_i - B_i\|$，$l_u$ 是上杆长度（常数）。
 
-### 8.3 杆重力项（简化）
+**重力向量**：
+- $G_z = \frac{\partial V}{\partial z} = Mg + 9g \sum \frac{\partial z_{P_i}}{\partial z}$
+- $G_\alpha = \frac{\partial V}{\partial \alpha} = 9g \sum \frac{\partial z_{P_i}}{\partial \alpha} + \frac{g}{2} \sum e_{i,z} \cdot 16 \frac{\partial l_i}{\partial \alpha}$
+- $G_\beta = \frac{\partial V}{\partial \beta} = 9g \sum \frac{\partial z_{P_i}}{\partial \beta} + \frac{g}{2} \sum e_{i,z} \cdot 16 \frac{\partial l_i}{\partial \beta}$
 
-如果忽略杆质量对重力项的贡献（或将杆重力合并到等效平台质量中）：
+### 8.3 方案二：均匀杆件势能
 
-$$G = \begin{bmatrix} Mg \\ 0 \\ 0 \end{bmatrix}$$
+根据第5.2节的势能公式：
 
-### 8.4 完整重力项（含两段杆质量）
+$$V = M g z + \sum_{i=1}^3 \frac{m_{rod} g}{2} (z_{P_i} + z_{B_i})$$
 
-根据新的势能公式 $V = Mgz + 9g \sum z_{P_i}$：
+**重力向量**：
+- $G_z = Mg + \frac{m_{rod}g}{2} \sum_{i=1}^3 \frac{\partial z_{P_i}}{\partial z}$
+- $G_\alpha = \frac{m_{rod}g}{2} \sum_{i=1}^3 \frac{\partial z_{P_i}}{\partial \alpha}$
+- $G_\beta = \frac{m_{rod}g}{2} \sum_{i=1}^3 \frac{\partial z_{P_i}}{\partial \beta}$
 
-$$G_z = \frac{\partial (Mgz)}{\partial z} + 9g \sum_{i=1}^3 \frac{\partial z_{P_i}}{\partial z} = Mg + 9g \cdot 3 = (M + 27)g$$
-
-$$G_\alpha = 9g \sum_{i=1}^3 \frac{\partial z_{P_i}}{\partial \alpha}$$
-
-$$G_\beta = 9g \sum_{i=1}^3 \frac{\partial z_{P_i}}{\partial \beta}$$
-
-> **注意**：系数从均匀杆的 $1/2$ 变成两段杆的 $9/25$。
+> **注意**：引入扰动后 $z_{B_i}$ 也随时间变化，但作为已知输入处理。
 
 ## 9. 完整动力学方程
 
@@ -423,7 +645,6 @@ $$\boxed{M(q)\ddot{q} + C(q,\dot{q})\dot{q} + G(q) = J^T f}$$
 
 $$M_{ij}\ddot{q}_j + C_{ij}\dot{q}_j + G_i = J^T f$$
 
-$$
 
 $$
 \begin{bmatrix} M_{11} & M_{12} & M_{13} \\ M_{21} & M_{22} & M_{23} \\ M_{31} & M_{32} & M_{33} \end{bmatrix}\begin{bmatrix} \ddot{z} \\ \ddot{\alpha} \\ \ddot{\beta} \end{bmatrix} + \begin{bmatrix} C_{11} & C_{12} & C_{13} \\ C_{21} & C_{22} & C_{23} \\ C_{31} & C_{32} & C_{33} \end{bmatrix}\begin{bmatrix} \dot{z} \\ \dot{\alpha} \\ \dot{\beta} \end{bmatrix} + \begin{bmatrix} G_1 \\ G_2 \\ G_3 \end{bmatrix} = J^T\begin{bmatrix} f_1 \\ f_2 \\ f_3 \end{bmatrix}
