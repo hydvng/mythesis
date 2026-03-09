@@ -36,4 +36,21 @@ python3 /home/ubuntu/Documents/mythesis/simulation/common/sim_uniform_rod_with_w
 
 默认仿真时长：100s（可在脚本 `main()` 中调整 `simulate(t_end=..., dt=...)`）。
 
+## 当前控制器（减少抖动的 PID 版本）
+
+`sim_uniform_rod_with_wave_demo.py` 当前默认使用“未知扰动”PID 控制器（不使用 $qdd_s$ 做扰动前馈）：
+
+- PID（对总位姿误差 $e=q_{ref}-q$）：
+  - `Kp = diag([2e4, 4e4, 4e4])`
+  - `Ki = diag([3e3, 1.5e3, 1.5e3])`
+  - `Kd = diag([2.2e4, 1.8e4, 1.8e4])`
+- 误差一阶低通滤波：`err_filter_T=0.05s`
+- 积分抗饱和：
+  - `integral_limit=[0.5, 0.1, 0.1]`（分别对应 z/alpha/beta 的积分上限）
+  - 若输出达到 `tau_limit`（限幅）则回退积分步进，避免 windup。
+
+调参建议（降低抖动优先）：
+- 抖动大：优先增大 `err_filter_T`（例如 0.08~0.15s），或适当减小 `Kd`。
+- 稳态误差大：适当增大 `Ki`，并配合更严格的 `integral_limit`。
+
 生成图片目录：`simulation/common/figures_uniform/`

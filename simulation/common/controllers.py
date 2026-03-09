@@ -55,9 +55,21 @@ class SimplePDGravityController3DOF:
     """
 
     Kp: np.ndarray  # (3,3)
-    Kd: np.ndarray  # (3,3)
+    Ki: Optional[np.ndarray] = None  # (3,3) or None
+    Kd: np.ndarray = None  # (3,3)
+    use_gravity_compensation: bool = True
     use_coriolis_compensation: bool = False
     tau_limit: Optional[np.ndarray] = None  # (3,) or scalar
+    # low-pass filter time constant (s). 0 or None -> no filter
+    err_filter_T: float = 0.05
+    # integral anti-windup clamp (per DOF), in the same unit as e (m/rad)
+    integral_limit: Optional[np.ndarray] = None
+
+    # internal state
+    _e_int: Optional[np.ndarray] = None
+    _e_f: Optional[np.ndarray] = None
+    _ed_f: Optional[np.ndarray] = None
+    _t_prev: Optional[float] = None
 
     def compute(
         self,
@@ -91,7 +103,47 @@ class SimplePDGravityController3DOF:
         e = q_ref - q
         ed = qd_ref - qd
 
-        tau = self.Kp @ e + self.Kd @ ed 
+        # init internal state
+        if self._e_int is None:
+            self._e_int = np.zeros(3)
+            self._e_f = e.copy()
+            self._ed_f = ed.copy()
+            self._t_prev = float(t)
+
+        # dt
+        dt = float(t) - float(self._t_prev)
+        if not np.isfinite(dt) or dt <= 0:
+            dt = 0.0
+
+        # low-pass filter on e/ed to reduce jitter
+        Tf = float(self.err_filter_T) if self.err_filter_T is not None else 0.0
+        if Tf > 0 and dt > 0:
+            a = dt / (Tf + dt)
+            self._e_f = (1 - a) * self._e_f + a * e
+            self._ed_f = (1 - a) * self._ed_f + a * ed
+        else:
+            self._e_f = e
+            self._ed_f = ed
+
+        # integral update
+        if self.Ki is not None and dt > 0:
+            self._e_int = self._e_int + self._e_f * dt
+            if self.integral_limit is not None:
+                lim_i = np.asarray(self.integral_limit, dtype=float)
+                if lim_i.size == 1:
+                    lim_i = np.full(3, float(lim_i))
+                lim_i = lim_i.reshape(3)
+                self._e_int = np.clip(self._e_int, -lim_i, lim_i)
+
+        # PID
+        tau = self.Kp @ self._e_f
+        if self.Kd is not None:
+            tau = tau + self.Kd @ self._ed_f
+        if self.Ki is not None:
+            tau = tau + self.Ki @ self._e_int
+
+        if self.use_gravity_compensation:
+            tau = tau + G
         if self.use_coriolis_compensation:
             tau = tau + C @ qd
 
@@ -102,6 +154,15 @@ class SimplePDGravityController3DOF:
             lim = lim.reshape(3)
             tau = np.clip(tau, -lim, lim)
 
+            # anti-windup (simple back-off): if saturated, don't integrate further
+            if self.Ki is not None and dt > 0:
+                sat = np.abs(tau) >= lim * 0.999
+                if np.any(sat):
+                    # rollback last integral step on saturated channels
+                    self._e_int[sat] = self._e_int[sat] - self._e_f[sat] * dt
+
+        # common tail
+        self._t_prev = float(t)
         return tau
 
 

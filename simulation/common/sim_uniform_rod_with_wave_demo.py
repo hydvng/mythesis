@@ -106,12 +106,19 @@ def simulate(t_end: float = 20.0, dt: float = 0.01):
 
     # 控制器：未知扰动下的简单 PD + 重力补偿（不使用 qdd_s）
     # 说明：这里 Kp/Kd 是“外环误差动力学”增益，先给一个稳一点的默认值。
-    Kp = np.diag([8000.0, 12000.0, 12000.0])
-    Kd = np.diag([9000.0, 8000.0, 8000.0])
+    # 经验上：z 的单位是 m，角度是 rad；所以角度通道的 Kp/Kd 看起来会更大。
+    # 这些参数偏“稳”，优先降低高频抖动。
+    Kp = np.diag([2.0e4, 4.0e4, 4.0e4])
+    Ki = np.diag([3.0e3, 1.5e3, 1.5e3])
+    Kd = np.diag([2.2e4, 1.8e4, 1.8e4])
     controller = SimplePDGravityController3DOF(
         Kp=Kp,
+        Ki=Ki,
         Kd=Kd,
-        use_coriolis_compensation=True,
+        use_gravity_compensation=True,
+        use_coriolis_compensation=False,
+        err_filter_T=0.05,
+        integral_limit=np.array([0.5, 0.1, 0.1]),
         tau_limit=np.array([5e4, 5e3, 5e3]),
     )
 

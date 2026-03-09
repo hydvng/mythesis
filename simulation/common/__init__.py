@@ -4,6 +4,5 @@ Common modules for thesis simulation
 """
 
 from .platform_dynamics import ParallelPlatform3DOF
-from .wave_disturbance import WaveDisturbance
 
-__all__ = ['ParallelPlatform3DOF', 'WaveDisturbance']
+__all__ = ['ParallelPlatform3DOF']
