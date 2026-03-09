@@ -16,8 +16,14 @@ import matplotlib
 matplotlib.use('Agg')
 from scipy.io import loadmat
 from scipy.interpolate import RegularGridInterpolator
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, Sequence, Literal
 import os
+
+try:
+    # Optional dependency: used when converting ship motion into tau_dist.
+    from simulation.common.platform_dynamics import ParallelPlatform3DOF
+except Exception:  # pragma: no cover
+    ParallelPlatform3DOF = None
 
 
 class WaveDisturbance:
@@ -49,13 +55,18 @@ class WaveDisturbance:
         6: {"Hs": 4.0,  "T1": 11.0, "description": "Very Heavy"},
         7: {"Hs": 5.5,  "T1": 12.5, "description": "Phenomenal"},
     }
+
+    # MSS DOF ordering (motionRAO amp index):
+    #   0=Surge, 1=Sway, 2=Heave, 3=Roll, 4=Pitch, 5=Yaw
+    DOF_NAMES_6 = ("surge", "sway", "heave", "roll", "pitch", "yaw")
+    ROT_DOF_IDX_6 = (3, 4, 5)  # roll, pitch, yaw
     
     def __init__(self,
                  Hs: float = 2.0,
                  T1: float = 8.0,
                  platform_params: Optional[Dict] = None,
                  vessel_file: str = 'supply.mat',
-                 wave_heading: float = 180.0,
+                 wave_heading: float = 45.0,
                  vessel_speed: int = 0,
                  n_components: int = 50,
                  use_directional_spectrum: bool = False,
@@ -405,14 +416,13 @@ class WaveDisturbance:
             'GM_L': float(main['GM_L'][0, 0].flatten()[0]),
         }
         
-        # 创建6自由度的插值函数
-        # MSS DOF: 0=Surge, 1=Sway, 2=Heave, 3=Roll, 4=Pitch, 5=Yaw
-        # 我们只需要: 2=Heave(Fz), 3=Roll(M_alpha), 4=Pitch(M_beta)
+    # 创建6自由度的插值函数
+    # MSS DOF: 0=Surge, 1=Sway, 2=Heave, 3=Roll, 4=Pitch, 5=Yaw
         self.rao_interp = {}
         
         amp_data = motionRAO['amp'][0, 0]
         
-        for dof in [2, 3, 4]:  # Heave, Roll, Pitch
+        for dof in range(6):  # full 6DOF
             # 获取RAO表: (频率, 方向, 速度)
             rao_table = amp_data[0, dof][:, :, self.vessel_speed_idx]
             
@@ -483,27 +493,29 @@ class WaveDisturbance:
     
     def _compute_RAO_directional(self):
         """计算方向相关的RAO矩阵"""
-        # RAO形状: (n_components, n_directions)
-        RAO = {
-            'Fz': np.zeros((self.n_components, self.n_directions)),
-            'M_alpha': np.zeros((self.n_components, self.n_directions)),
-            'M_beta': np.zeros((self.n_components, self.n_directions))
+        # RAO shape for each dof: (n_components, n_directions)
+        # We keep both:
+        #   1) full 6DOF keys: "surge".."yaw" (for ship motion synthesis)
+        #   2) legacy 3DOF aliases: "Fz","M_alpha","M_beta" mapping to heave/roll/pitch
+        RAO: Dict[str, np.ndarray] = {
+            name: np.zeros((self.n_components, self.n_directions))
+            for name in self.DOF_NAMES_6
         }
         
         for i, w in enumerate(self.omegas):
             for j, direction in enumerate(self.wave_directions):
-                # 查询插值函数
-                # DOF 2=Heave, DOF 3=Roll, DOF 4=Pitch
-                try:
-                    heave_rao = self.rao_interp[2]([[w, direction]])[0]
-                    roll_rao = self.rao_interp[3]([[w, direction]])[0]
-                    pitch_rao = self.rao_interp[4]([[w, direction]])[0]
-                except:
-                    heave_rao = roll_rao = pitch_rao = 0.0
-                
-                RAO['Fz'][i, j] = heave_rao
-                RAO['M_alpha'][i, j] = roll_rao
-                RAO['M_beta'][i, j] = pitch_rao
+                # Query interpolators for all 6DOF.
+                for dof_idx, name in enumerate(self.DOF_NAMES_6):
+                    try:
+                        rao_val = float(self.rao_interp[dof_idx]([[w, direction]])[0])
+                    except Exception:
+                        rao_val = 0.0
+                    RAO[name][i, j] = rao_val
+
+        # Legacy aliases expected by older plotting/helpers.
+        RAO["Fz"] = RAO["heave"]
+        RAO["M_alpha"] = RAO["roll"]
+        RAO["M_beta"] = RAO["pitch"]
         
         return RAO
     
@@ -569,6 +581,228 @@ class WaveDisturbance:
             disturbance = disturbance + self._burst_step_profile(t)
         
         return disturbance
+
+    def generate_ship_motion(
+        self,
+        t: np.ndarray,
+        angle_unit: Literal["rad", "deg"] = "rad",
+    ) -> Dict[str, np.ndarray]:
+        r"""Generate ship/base motion $q_s, \dot q_s, \ddot q_s$ in time domain.
+
+        This is a lightweight wrapper around the same spectral synthesis used in
+        :meth:`generate_disturbance`, but returns kinematic quantities instead of
+        equivalent inertial generalized forces.
+
+        Args:
+            t: time array
+            angle_unit: unit for rotational DOFs (roll/pitch/yaw) in the returned arrays.
+                - "rad" (default): return radians
+                - "deg": return degrees
+
+        Returns:
+            dict with keys: "q_s", "qd_s", "qdd_s" each shaped (len(t), 6)
+            corresponding to MSS ordering:
+                [surge, sway, heave, roll, pitch, yaw]
+        """
+        t = np.asarray(t, dtype=float)
+        n_steps = len(t)
+
+        q_s = np.zeros((n_steps, 6), dtype=float)
+        qd_s = np.zeros((n_steps, 6), dtype=float)
+        qdd_s = np.zeros((n_steps, 6), dtype=float)
+
+        # NOTE: RAO units in MSS are typically:
+        #   - Translational DOFs: m/m
+        #   - Rotational DOFs: rad/m
+        # so q_s is directly heuristic ship motion response.
+
+        if self.use_directional_spectrum:
+            for i, name in enumerate(self.DOF_NAMES_6):
+                RAO_matrix = self.RAO[name]  # (n_components, n_directions)
+                x = np.zeros(n_steps)
+                xd = np.zeros(n_steps)
+                xdd = np.zeros(n_steps)
+                for k in range(self.n_components):
+                    omega_k = self.omegas[k]
+                    for d in range(self.n_directions):
+                        A_kd = np.sqrt(2.0 * self.S[k, d] * self.domega)
+                        X_kd = RAO_matrix[k, d] * A_kd
+                        phase = self.phases[k, d]
+
+                        arg = omega_k * t + phase
+                        c = np.cos(arg)
+                        s = np.sin(arg)
+                        x += X_kd * c
+                        xd += -omega_k * X_kd * s
+                        xdd += -omega_k**2 * X_kd * c
+
+                q_s[:, i] = x
+                qd_s[:, i] = xd
+                qdd_s[:, i] = xdd
+        else:
+            for i, name in enumerate(self.DOF_NAMES_6):
+                RAO = self.RAO[name][:, 0]
+                x = np.zeros(n_steps)
+                xd = np.zeros(n_steps)
+                xdd = np.zeros(n_steps)
+                for k in range(self.n_components):
+                    omega_k = self.omegas[k]
+                    A_k = np.sqrt(2.0 * self.S[k] * self.domega)
+                    X_k = RAO[k] * A_k
+                    phase = self.phases[k]
+
+                    arg = omega_k * t + phase
+                    c = np.cos(arg)
+                    s = np.sin(arg)
+                    x += X_k * c
+                    xd += -omega_k * X_k * s
+                    xdd += -omega_k**2 * X_k * c
+
+                q_s[:, i] = x
+                qd_s[:, i] = xd
+                qdd_s[:, i] = xdd
+
+        if self.enable_burst_step:
+            # For ship motion output, we treat burst step as an *equivalent generalized force*
+            # rather than a kinematic jump. So we don't modify q_s here.
+            pass
+
+        angle_unit = str(angle_unit).strip().lower()
+        if angle_unit not in ("rad", "deg"):
+            raise ValueError(f"angle_unit must be 'rad' or 'deg', got {angle_unit!r}")
+
+        if angle_unit == "deg":
+            scale = 180.0 / np.pi
+            q_s = q_s.copy()
+            qd_s = qd_s.copy()
+            qdd_s = qdd_s.copy()
+            q_s[:, self.ROT_DOF_IDX_6] *= scale
+            qd_s[:, self.ROT_DOF_IDX_6] *= scale
+            qdd_s[:, self.ROT_DOF_IDX_6] *= scale
+
+        return {
+            "q_s": q_s,
+            "qd_s": qd_s,
+            "qdd_s": qdd_s,
+            "angle_unit": angle_unit,
+        }
+
+    @staticmethod
+    def _normalize_state_array(x: np.ndarray, n_steps: int, dim: int, name: str) -> np.ndarray:
+        """Normalize state array to shape (n_steps, dim).
+
+        Accepts:
+          - (dim,)
+          - (n_steps, dim)
+        """
+        x = np.asarray(x, dtype=float)
+        if x.shape == (dim,):
+            x = np.repeat(x.reshape(1, dim), n_steps, axis=0)
+        if x.shape != (n_steps, dim):
+            raise ValueError(f"{name} must be shape (N,{dim}) or ({dim},), got {x.shape}")
+        return x
+
+    def generate(self,
+                 t: np.ndarray,
+                 output: str = "tau_dist",
+                 q_u: Optional[np.ndarray] = None,
+                 qd_u: Optional[np.ndarray] = None,
+                 platform: Optional[object] = None,
+                 angle_unit: Literal["rad", "deg"] = "rad") -> Dict[str, np.ndarray]:
+        """Unified disturbance generator with selectable output.
+
+        Args:
+            t: time array (N,)
+            output: "tau_dist" or "ship_state".
+                - "ship_state": returns q_s/qd_s/qdd_s (kinematics).
+                - "tau_dist": returns tau_dist (generalized disturbance) computed as
+                    tau_s = -M(q_u) qdd_s - C(q_u, qd_u) qd_s
+                  plus optional burst-step force (if enabled) added onto tau_dist.
+          q_u: platform *total* generalized coordinates in the same DOF dimension as your platform model.
+              Accepts (N,3)/(3,) for 3DOF or (N,6)/(6,) for 6DOF.
+          qd_u: platform *total* generalized velocities. Same shape rules as q_u.
+            platform: optional platform dynamics instance providing mass_matrix and coriolis_matrix.
+                If omitted, will try to instantiate :class:`simulation.common.platform_dynamics.ParallelPlatform3DOF`.
+
+        Returns:
+            dict containing either:
+              - {"q_s","qd_s","qdd_s"}
+              - {"tau_dist","q_s","qd_s","qdd_s"}
+        """
+        output = str(output).strip().lower()
+
+        ship = self.generate_ship_motion(t, angle_unit=angle_unit)
+        q_s, qd_s, qdd_s = ship["q_s"], ship["qd_s"], ship["qdd_s"]
+
+        if output in ("ship_state", "q", "qs"):
+            return ship
+
+        if output not in ("tau_dist", "tau", "tau_s"):
+            raise ValueError(f"Unknown output='{output}'. Use 'tau_dist' or 'ship_state'.")
+
+        if q_u is None or qd_u is None:
+            # Provide a convenient default for many use cases: linearize around zero state.
+            # This keeps the interface easy when users just want a disturbance time series.
+            q_u = np.zeros((len(t), 6), dtype=float)
+            qd_u = np.zeros((len(t), 6), dtype=float)
+
+        t = np.asarray(t, dtype=float)
+        n_steps = len(t)
+
+        if platform is None:
+            if ParallelPlatform3DOF is None:
+                raise RuntimeError(
+                    "platform is None but simulation.common.platform_dynamics.ParallelPlatform3DOF cannot be imported. "
+                    "Pass a platform instance with mass_matrix() and coriolis_matrix()."
+                )
+            platform = ParallelPlatform3DOF(
+                m_platform=float(self.platform.get('m', 347.54)),
+                Ixx=float(self.platform.get('Ixx', 60.64)),
+                Iyy=float(self.platform.get('Iyy', 115.4)),
+                Izz=float(self.platform.get('Izz', 80.0)),
+            )
+
+        # Infer platform DOF dimension from its mass matrix.
+        M0 = np.asarray(platform.mass_matrix(np.asarray(q_u)[0] if np.asarray(q_u).ndim == 2 else np.asarray(q_u)), dtype=float)
+        if M0.ndim != 2 or M0.shape[0] != M0.shape[1]:
+            raise ValueError(f"platform.mass_matrix() must return a square matrix, got shape {M0.shape}")
+        dim = int(M0.shape[0])
+        if dim not in (3, 6):
+            raise ValueError(f"Only 3DOF or 6DOF platforms are supported currently, got dim={dim}")
+
+        q_u = self._normalize_state_array(q_u, n_steps, dim, name="q_u")
+        qd_u = self._normalize_state_array(qd_u, n_steps, dim, name="qd_u")
+
+        if q_s.shape[1] < dim:
+            raise ValueError(
+                f"Ship motion synthesis provides {q_s.shape[1]} DOF, but platform expects dim={dim}."
+            )
+
+        tau_dist = np.zeros((n_steps, dim), dtype=float)
+        for k in range(n_steps):
+            M = np.asarray(platform.mass_matrix(q_u[k]), dtype=float)
+            C = np.asarray(platform.coriolis_matrix(q_u[k], qd_u[k]), dtype=float)
+            tau_dist[k] = -(M @ qdd_s[k, :dim] + C @ qd_s[k, :dim])
+
+        # Add optional burst step (already in generalized force domain)
+        if self.enable_burst_step:
+            step = self._burst_step_profile(t)
+            if step.shape[1] == dim:
+                tau_dist = tau_dist + step
+            else:
+                # Backwards compatibility: existing step is defined for 3DOF（Fz, M_alpha, M_beta）.
+                # For 6DOF, we map it into [surge,sway,heave,roll,pitch,yaw] -> indices [2,3,4].
+                if dim == 6 and step.shape[1] == 3:
+                    mapped = np.zeros((n_steps, 6), dtype=float)
+                    mapped[:, 2] = step[:, 0]  # heave
+                    mapped[:, 3] = step[:, 1]  # roll
+                    mapped[:, 4] = step[:, 2]  # pitch
+                    tau_dist = tau_dist + mapped
+                else:
+                    raise ValueError(f"burst step profile has shape {step.shape} which can't be mapped to dim={dim}")
+
+        # NOTE: tau_dist is always in force/moment units. angle_unit only affects ship kinematics.
+        return {"tau_dist": tau_dist, **ship}
 
     def plot_burst_step_demo(self,
                              t_duration: float = 30.0,
