@@ -26,6 +26,48 @@ disturbance/
 
 ## Quick Start
 
+## UAV Landing / Impact Disturbance
+
+This repo also includes a simple **UAV landing disturbance** model (static load + impulse) and a
+ready-to-run demo to visualize the **platform states after impact**.
+
+### UAV disturbance model
+
+- Module: `simulation/disturbance/uav_landing_disturbance.py`
+- Output generalized force (3DOF): `tau = [tau_z, tau_alpha, tau_beta]`
+    - $+z$ is **gravity direction** (per project convention)
+    - Static load is applied as a ramped step
+    - Optional impact impulse is applied as a short half-sine pulse with
+        $\int F_{imp}(t) dt = I_z$ (N·s)
+
+Generated curve demo (disturbance only):
+
+- Script: `simulation/common/plot_uav_landing_disturbance_demo.py`
+- Output: `simulation/disturbance/figures/uav_landing_disturbance.png`
+
+### Platform impact simulation demo (states after impact)
+
+- Script: `simulation/disturbance/sim_platform_uav_impact_demo.py`
+- It runs **two cases** for easy comparison:
+    - `uav_only`: UAV disturbance only
+    - `uav_plus_wave`: UAV disturbance + wave-induced ship motion
+
+Outputs are generated under:
+
+- `simulation/disturbance/figures/uav_impact/uav_only/`
+- `simulation/disturbance/figures/uav_impact/uav_plus_wave/`
+
+Each folder includes (z/alpha/beta stacked 3-subplots):
+
+- `position.png`, `velocity.png`, `acceleration.png`
+- `forces.png` (control / UAV disturbance / total)
+- `disturbance.png`
+- `*_zoom.png` (zoomed window around landing time $t_0$)
+
+Key parameters to tune are near the top of the script:
+- `UavLandingParams(t0, ramp, impulse_Iz, impulse_duration, radius_limit, ...)`
+- simulation `dt` (smaller dt resolves the impulse shape better)
+
 ### Basic Usage (Single Direction)
 
 ```python
