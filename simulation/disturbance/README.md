@@ -37,8 +37,100 @@ ready-to-run demo to visualize the **platform states after impact**.
 - Output generalized force (3DOF): `tau = [tau_z, tau_alpha, tau_beta]`
     - $+z$ is **gravity direction** (per project convention)
     - Static load is applied as a ramped step
-    - Optional impact impulse is applied as a short half-sine pulse with
-        $\int F_{imp}(t) dt = I_z$ (N·s)
+    - Optional impact impulse is applied as a short half-sine pulse.
+
+#### How the impulse is introduced (important)
+
+In this project, the UAV touchdown disturbance is modeled as:
+
+$$
+	au(t) = \tau_{static}(t) + \tau_{imp}(t)
+$$
+
+1) **Static load (step with ramp)**
+
+After touchdown ($t\ge t_0$), the UAV weight is applied along $+z$ direction (gravity direction):
+
+$$
+F_z = m_{uav} g
+$$
+
+To avoid numerical artifacts we use a linear ramp gate $s(t)\in[0,1]$ (implemented in `_ramp_profile`):
+
+$$
+	au_{static}(t)=
+\begin{bmatrix}
+F_z\\
+M_x\\
+M_y
+\end{bmatrix} s(t)
+$$
+
+2) **Impact impulse (half-sine pulse with area normalization)**
+
+We approximate an ideal impulse $I_z$ (N·s) with a smooth pulse:
+
+$$
+F_{imp}(t)=A\,p(t)
+$$
+
+where $p(t)$ is a half-sine supported on $[t_0, t_0+T]$ (implemented in `_half_sine_pulse`):
+
+$$
+p(t)=\sin\Big(\pi\frac{t-t_0}{T}\Big),\quad t\in[t_0,t_0+T],\qquad p(t)=0\ \text{otherwise}
+$$
+
+Its area is
+
+$$
+\int p(t)dt = \frac{2T}{\pi}
+$$
+
+so we choose the amplitude $A$ such that
+
+$$
+\int F_{imp}(t)dt = I_z
+\ \Rightarrow\ A = \frac{I_z}{2T/\pi} = \frac{\pi I_z}{2T}
+$$
+
+In code (inside `generate_uav_landing_tau`):
+- `pulse_area = 2*T/pi`
+- `Fz_imp_amp = impulse_Iz / pulse_area`
+- `tau_z += Fz_imp_amp * p(t)`
+
+3) **Eccentric touchdown → roll/pitch moments (static + impulse)**
+
+Let the landing offset be $r=[r_x, r_y]$ (within radius 0.3 m). A vertical force produces moments:
+
+$$
+M_x = r_y F_z,\qquad M_y = -r_x F_z
+$$
+
+The impulse part uses the same mapping:
+
+$$
+M_{x,imp}=r_y F_{imp},\qquad M_{y,imp}=-r_x F_{imp}
+$$
+
+So the generalized impulse torque integrals satisfy:
+
+$$
+\int \tau_{\alpha,imp} dt = r_y I_z,\qquad \int \tau_{\beta,imp} dt = -r_x I_z
+$$
+
+### How it is injected into the platform simulation
+
+In `simulation/disturbance/sim_platform_uav_impact_demo.py`, the platform dynamics uses:
+
+$$
+M(q)\,\ddot q_c = \tau_{ctrl} + \tau_{uav} + \tau_{wave} - C(q,\dot q)\,\dot q_c - G(q)
+$$
+
+where the **wave equivalent generalized disturbance** is computed similarly to the uniform-rod wave demo:
+
+$$
+	au_{wave} = -M(q)\,\ddot q_s - C(q,\dot q)\,\dot q_s
+$$
 
 Generated curve demo (disturbance only):
 
@@ -63,6 +155,11 @@ Each folder includes (z/alpha/beta stacked 3-subplots):
 - `forces.png` (control / UAV disturbance / total)
 - `disturbance.png`
 - `*_zoom.png` (zoomed window around landing time $t_0$)
+
+For the **wave case** (`uav_plus_wave`) additional outputs are included:
+
+- `wave_disturbance.png` (equivalent generalized disturbance $\tau_{wave}$)
+- `wave_disturbance_zoom_5_8s.png` (zoom view for small disturbances in the time window 5–8 s)
 
 Key parameters to tune are near the top of the script:
 - `UavLandingParams(t0, ramp, impulse_Iz, impulse_duration, radius_limit, ...)`
