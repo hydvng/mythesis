@@ -103,6 +103,10 @@
 2.3 动力学建模
       2.3.1 刚体动力学模型
               - 提示：Lagrange法。
+              - 平台仿真实现采用 `UniformRodPlatform3DOF`。
+              - 动力学主方程写作：$M(q)\ddot q + C(q,\dot q)\dot q + G(q) + d = \tau$。
+              - 其中 $M(q)$ 与 $G(q)$ 在基础平台模型上进一步纳入均匀杆件的平动/转动动能与重力贡献。
+              - 当前仿真实现中，$C(q,\dot q)$ 暂复用基础模型 `ParallelPlatform3DOF` 的解析形式，作为可运行且数值稳定的近似。
     2.3.2 电动缸驱动动力学
     2.3.3 模型不确定性与参数变化
 
@@ -149,6 +153,9 @@
     2.5.4 总扰动描述：d(t) = d_wave + d_param + d_unmodel
 
     （可复现仿真/绘图脚本与输出）
+                  - 第2章系统建模与约束分析主脚本：`simulation/chapter2/experiments/chapter2_simulation.py`
+                        * 当前平台模型：`simulation/common/uniform_rod_platform_dynamics.py` 中的 `UniformRodPlatform3DOF`
+                        * 图输出目录：`simulation/chapter2/figures/`
       - 海浪扰动输出模式可视化：`simulation/disturbance/plot_wave_output_modes_demo.py`
       - 海浪扰动输出模式单元测试：`simulation/disturbance/test_wave_disturbance_output_modes.py`
       - UAV着舰扰动（静载+冲量）曲线示例：`simulation/common/plot_uav_landing_disturbance_demo.py`
@@ -156,6 +163,7 @@
         `simulation/disturbance/sim_platform_uav_impact_demo.py`
         * 输出目录：`simulation/disturbance/figures/uav_impact/`
         * 复合工况包含：`uav_only/` 与 `uav_plus_wave/`，并提供海浪扰动[5s, 8s]局部放大图用于检查小扰动注入
+                  - 提示：若论文正文强调“最新动力学模型”，应明确说明当前第2章仿真已采用 rod 增强的 $M(q)$、$G(q)$，而 $C(q,\dot q)$ 仍为基础模型近似。
 
 2.6 控制问题形式化
     2.6.1 镇定控制目标

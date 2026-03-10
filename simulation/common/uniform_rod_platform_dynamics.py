@@ -29,7 +29,13 @@ from __future__ import annotations
 
 import numpy as np
 
-from .platform_dynamics import ParallelPlatform3DOF
+# Support both:
+# 1) package import: `from simulation.common.uniform_rod_platform_dynamics import ...`
+# 2) sys.path-hack import used by some chapter scripts: `import uniform_rod_platform_dynamics`
+try:
+    from .platform_dynamics import ParallelPlatform3DOF
+except ImportError:  # pragma: no cover
+    from platform_dynamics import ParallelPlatform3DOF
 
 
 class UniformRodPlatform3DOF(ParallelPlatform3DOF):

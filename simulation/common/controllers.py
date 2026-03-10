@@ -65,6 +65,14 @@ class SimplePDGravityController3DOF:
     # integral anti-windup clamp (per DOF), in the same unit as e (m/rad)
     integral_limit: Optional[np.ndarray] = None
 
+    # anti-windup options
+    # - when actuator saturates, apply back-calculation to drive integrator so that
+    #   (unsat_tau - sat_tau) is compensated. This improves steady-state recovery after
+    #   impulses while keeping the controller model-light.
+    anti_windup_mode: str = "rollback"  # "rollback" | "freeze" | "backcalc" | "none"
+    # back-calculation gain (1/s). Typical: 5~50. Larger -> faster integrator unwind.
+    anti_windup_gain: float = 15.0
+
     # internal state
     _e_int: Optional[np.ndarray] = None
     _e_f: Optional[np.ndarray] = None
@@ -135,7 +143,7 @@ class SimplePDGravityController3DOF:
                 lim_i = lim_i.reshape(3)
                 self._e_int = np.clip(self._e_int, -lim_i, lim_i)
 
-        # PID
+        # PID (unsaturated)
         tau = self.Kp @ self._e_f
         if self.Kd is not None:
             tau = tau + self.Kd @ self._ed_f
@@ -152,14 +160,37 @@ class SimplePDGravityController3DOF:
             if lim.size == 1:
                 lim = np.full(3, float(lim))
             lim = lim.reshape(3)
-            tau = np.clip(tau, -lim, lim)
 
-            # anti-windup (simple back-off): if saturated, don't integrate further
+            tau_unsat = tau
+            tau = np.clip(tau_unsat, -lim, lim)
+
+            # anti-windup
             if self.Ki is not None and dt > 0:
-                sat = np.abs(tau) >= lim * 0.999
-                if np.any(sat):
-                    # rollback last integral step on saturated channels
-                    self._e_int[sat] = self._e_int[sat] - self._e_f[sat] * dt
+                mode = (self.anti_windup_mode or "rollback").lower()
+                sat = np.abs(tau_unsat) >= lim * 0.999
+                if np.any(sat) and mode != "none":
+                    if mode == "rollback":
+                        # rollback last integral step on saturated channels
+                        self._e_int[sat] = self._e_int[sat] - self._e_f[sat] * dt
+                    elif mode == "freeze":
+                        # do nothing (equivalent to freezing integrator on saturated channels)
+                        pass
+                    elif mode == "backcalc":
+                        # back-calculation: e_int_dot += k_aw * Ki^{-1} (tau_sat - tau_unsat)
+                        # implement in discrete time: e_int += k_aw * Ki^{-1} * (tau - tau_unsat) * dt
+                        k_aw = float(self.anti_windup_gain)
+                        if k_aw > 0:
+                            try:
+                                Ki_inv = np.linalg.inv(np.asarray(self.Ki, dtype=float))
+                                self._e_int = self._e_int + k_aw * (Ki_inv @ (tau - tau_unsat)) * dt
+                            except np.linalg.LinAlgError:
+                                # fallback: per-channel approx if Ki is singular
+                                Ki_diag = np.diag(np.asarray(self.Ki, dtype=float))
+                                Ki_diag = np.where(np.abs(Ki_diag) > 1e-12, Ki_diag, 1.0)
+                                self._e_int = self._e_int + k_aw * ((tau - tau_unsat) / Ki_diag) * dt
+                    else:
+                        # unknown mode -> keep previous behavior
+                        self._e_int[sat] = self._e_int[sat] - self._e_f[sat] * dt
 
         # common tail
         self._t_prev = float(t)

@@ -1,17 +1,32 @@
 """
-第2章仿真脚本：系统建模与约束分析验证
-生成论文所需的图2-1到图2-5
+第2章仿真脚本：系统建模与约束分析验证。
+
+当前平台模型：`UniformRodPlatform3DOF`
+- 运动学：沿用 3-UPS/PU 3DOF 平台的几何/雅可比接口
+- 动力学：使用包含均匀杆件附加项的 M(q)、G(q)
+- 科里奥利项：当前仍暂复用基础模型的 C(q, qd)
+
+生成论文所需的图2-1到图2-10。
 """
 
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'common'))
+
+# Ensure we always use the *latest* kinematics/dynamics implementation under
+# `simulation/common` for Chapter 2 figures.
+_COMMON_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'common'))
+if _COMMON_DIR not in sys.path:
+    sys.path.insert(0, _COMMON_DIR)
+
+_DISTURBANCE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'disturbance'))
+if _DISTURBANCE_DIR not in sys.path:
+    sys.path.insert(0, _DISTURBANCE_DIR)
 
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-from platform_dynamics import ParallelPlatform3DOF
+from uniform_rod_platform_dynamics import UniformRodPlatform3DOF
 from wave_disturbance import WaveDisturbance
 
 plt.rcParams['font.sans-serif'] = ['DejaVu Sans']
@@ -22,7 +37,8 @@ class Chapter2Simulation:
     """第2章仿真实验"""
     
     def __init__(self):
-        self.platform = ParallelPlatform3DOF()
+        # Use the latest kinematics/dynamics model with uniform-rod effects.
+        self.platform = UniformRodPlatform3DOF()
         self.figures_dir = os.path.join(os.path.dirname(__file__), '..', 'figures')
         os.makedirs(self.figures_dir, exist_ok=True)
         self.figures = []
@@ -648,6 +664,7 @@ class Chapter2Simulation:
     def plot_figure_2_8_workspace_3d(self):
         """图2-8: 3D工作空间可视化"""
         fig = plt.figure(figsize=(14, 10))
+        gs = fig.add_gridspec(2, 2, width_ratios=[1.08, 1.0], wspace=0.24, hspace=0.32)
         
         # 生成工作空间点
         n_points = 5000
@@ -665,22 +682,28 @@ class Chapter2Simulation:
         feasible_points = np.array(feasible_points)
         
         # 主图：3D工作空间
-        ax1 = fig.add_subplot(121, projection='3d')
+        ax1 = fig.add_subplot(gs[0, 0], projection='3d')
         if len(feasible_points) > 0:
             scatter = ax1.scatter(feasible_points[:, 0], 
                                  np.degrees(feasible_points[:, 1]), 
                                  np.degrees(feasible_points[:, 2]),
                                  c=feasible_points[:, 0], cmap='viridis', 
                                  alpha=0.6, s=20)
-            plt.colorbar(scatter, ax=ax1, label='z (m)')
+            fig.colorbar(scatter, ax=ax1, label='z (m)', fraction=0.042, pad=0.04)
         
         ax1.set_xlabel('z (m)')
         ax1.set_ylabel('α (deg)')
         ax1.set_zlabel('β (deg)')
         ax1.set_title('3D Workspace', fontsize=14, fontweight='bold')
+        try:
+            ax1.set_box_aspect((1.2, 1.0, 0.9))
+        except AttributeError:
+            pass
+        pos1 = ax1.get_position()
+        ax1.set_position([pos1.x0 - 0.03, pos1.y0, pos1.width, pos1.height])
         
         # 右侧：三个2D投影
-        ax2 = fig.add_subplot(222)
+        ax2 = fig.add_subplot(gs[0, 1])
         if len(feasible_points) > 0:
             ax2.scatter(feasible_points[:, 0], np.degrees(feasible_points[:, 1]), 
                        c='blue', alpha=0.5, s=10)
@@ -689,7 +712,7 @@ class Chapter2Simulation:
         ax2.set_title('z-α Projection')
         ax2.grid(True, alpha=0.3)
         
-        ax3 = fig.add_subplot(223)
+        ax3 = fig.add_subplot(gs[1, 0])
         if len(feasible_points) > 0:
             ax3.scatter(feasible_points[:, 0], np.degrees(feasible_points[:, 2]), 
                        c='red', alpha=0.5, s=10)
@@ -698,7 +721,7 @@ class Chapter2Simulation:
         ax3.set_title('z-β Projection')
         ax3.grid(True, alpha=0.3)
         
-        ax4 = fig.add_subplot(224)
+        ax4 = fig.add_subplot(gs[1, 1])
         if len(feasible_points) > 0:
             ax4.scatter(np.degrees(feasible_points[:, 1]), 
                        np.degrees(feasible_points[:, 2]), 
@@ -708,7 +731,6 @@ class Chapter2Simulation:
         ax4.set_title('α-β Projection')
         ax4.grid(True, alpha=0.3)
         
-        plt.tight_layout()
         plt.savefig(os.path.join(self.figures_dir, 'fig2_8_workspace_3d.png'), 
                    dpi=300, bbox_inches='tight')
         self.figures.append('fig2_8_workspace_3d.png')
