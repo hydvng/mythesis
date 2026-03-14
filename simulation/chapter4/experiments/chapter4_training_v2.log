@@ -1,0 +1,107 @@
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+Users of this version of Gym should be able to simply replace 'import gym' with 'import gymnasium as gym' in the vast majority of cases.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+
+======================================================================
+Chapter 4 课程学习训练  (STESO + HSC + SAC)
+======================================================================
+  总回合: 1500  |  设备: cuda
+  warm-up: 8000 steps  |  batch: 256  |  updates/step: 2
+已加载船型: input
+  Lpp=82.8m, B=19.2m, T=6.0m
+V4SAC Network Info:
+  Actor parameters: 73,478
+  Critic parameters: 73,729
+  Total parameters: 220,936
+  Gamma: 0.995, Tau: 0.002, GradClip: 0.5
+  网络参数量: actor=73,478  critic=147,458
+
+────────────────────────────────────────────────────────────
+  ▶ 进入 Stage 1  (Hs∈(1.0, 1.0), sinusoidal_small)
+────────────────────────────────────────────────────────────
+  ep    0 [S1] Hs=1.0 | Reward=  -18.870  ISE=0.18870  ← 新最佳
+  ep    2 [S1] Hs=1.0 | Reward=  -17.878  ISE=0.17878  ← 新最佳
+  ep    3 [S1] Hs=1.0 | Reward=  -17.226  ISE=0.17226  ← 新最佳
+  ep    5 [S1] Hs=1.0 | Reward=  -16.259  ISE=0.16259  ← 新最佳
+  ep    6 [S1] Hs=1.0 | Reward=  -10.066  ISE=0.10066  ← 新最佳
+  ep   10 [S1] Hs=1.0 | Reward=   -8.302  ISE=0.08302  ← 新最佳
+  ep   12 [S1] Hs=1.0 | Reward=   -7.951  ISE=0.07951  ← 新最佳
+  ep   15 [S1] Hs=1.0 | Reward=   -3.948  ISE=0.03948  ← 新最佳
+  ep   16 [S1] Hs=1.0 | Reward=   -3.016  ISE=0.03016  ← 新最佳
+  ep   21 [S1] Hs=1.0 | Reward=   -2.912  ISE=0.02912  ← 新最佳
+  ep   22 [S1] Hs=1.0 | Reward=   -2.742  ISE=0.02742  ← 新最佳
+  ep   23 [S1] Hs=1.0 | Reward=   -2.638  ISE=0.02638  ← 新最佳
+  ep   24 [S1] Hs=1.0 | Reward=   -2.526  ISE=0.02526  ← 新最佳
+  ep   25 [S1] Hs=1.0 | Reward=   -2.128  ISE=0.02128  ← 新最佳
+  ep   27 [S1] Hs=1.0 | Reward=   -2.051  ISE=0.02051  ← 新最佳
+  ep   28 [S1] Hs=1.0 | Reward=   -1.977  ISE=0.01977  ← 新最佳
+  ep   30 [S1] Hs=1.0 | Reward=   -1.805  ISE=0.01805  ← 新最佳
+  ep   31 [S1] Hs=1.0 | Reward=   -1.711  ISE=0.01711  ← 新最佳
+  ep   32 [S1] Hs=1.0 | Reward=   -1.251  ISE=0.01251  ← 新最佳
+  ep   33 [S1] Hs=1.0 | Reward=   -1.052  ISE=0.01052  ← 新最佳
+  ep   35 [S1] Hs=1.0 | Reward=   -0.896  ISE=0.00896  ← 新最佳
+  ep   36 [S1] Hs=1.0 | Reward=   -0.752  ISE=0.00752  ← 新最佳
+  ep   41 [S1] Hs=1.0 | Reward=   -0.713  ISE=0.00713  ← 新最佳
+  ep   42 [S1] Hs=1.0 | Reward=   -0.653  ISE=0.00653  ← 新最佳
+  ep   43 [S1] Hs=1.0 | Reward=   -0.602  ISE=0.00602  ← 新最佳
+  ep   44 [S1] Hs=1.0 | Reward=   -0.591  ISE=0.00591  ← 新最佳
+  ep   45 [S1] Hs=1.0 | Reward=   -0.590  ISE=0.00590  ← 新最佳
+  ep   47 [S1] Hs=1.0 | Reward=   -0.549  ISE=0.00549  ← 新最佳
+  ep   50 [S1] Hs=1.0 | Reward=   -0.620  ISE=0.00620  best=-0.549  (34.7min)
+  ep   51 [S1] Hs=1.0 | Reward=   -0.495  ISE=0.00495  ← 新最佳
+  ep   52 [S1] Hs=1.0 | Reward=   -0.444  ISE=0.00444  ← 新最佳
+  ep   53 [S1] Hs=1.0 | Reward=   -0.429  ISE=0.00429  ← 新最佳
+  ep   55 [S1] Hs=1.0 | Reward=   -0.392  ISE=0.00392  ← 新最佳
+  ep   70 [S1] Hs=1.0 | Reward=   -0.355  ISE=0.00355  ← 新最佳
+  ep   71 [S1] Hs=1.0 | Reward=   -0.334  ISE=0.00334  ← 新最佳
+  ep   73 [S1] Hs=1.0 | Reward=   -0.313  ISE=0.00313  ← 新最佳
+  ep   75 [S1] Hs=1.0 | Reward=   -0.312  ISE=0.00312  ← 新最佳
+  ep   76 [S1] Hs=1.0 | Reward=   -0.310  ISE=0.00310  ← 新最佳
+  ep   81 [S1] Hs=1.0 | Reward=   -0.296  ISE=0.00296  ← 新最佳
+  ep   86 [S1] Hs=1.0 | Reward=   -0.278  ISE=0.00278  ← 新最佳
+  ep   88 [S1] Hs=1.0 | Reward=   -0.274  ISE=0.00274  ← 新最佳
+  ep   90 [S1] Hs=1.0 | Reward=   -0.267  ISE=0.00267  ← 新最佳
+  ep   93 [S1] Hs=1.0 | Reward=   -0.255  ISE=0.00255  ← 新最佳
+  ep  100 [S1] Hs=1.0 | Reward=   -0.334  ISE=0.00334  best=-0.255  (70.5min)
+  ep  101 [S1] Hs=1.0 | Reward=   -0.233  ISE=0.00233  ← 新最佳
+  ep  150 [S1] Hs=1.0 | Reward=   -0.344  ISE=0.00344  best=-0.233  (105.9min)
+  ep  200 [S1] Hs=1.0 | Reward=   -0.345  ISE=0.00345  best=-0.233  (141.5min)
+  ep  250 [S1] Hs=1.0 | Reward=   -0.761  ISE=0.00761  best=-0.233  (176.8min)
+
+────────────────────────────────────────────────────────────
+  ▶ 进入 Stage 2  (Hs∈(2.0, 2.0), sinusoidal)
+────────────────────────────────────────────────────────────
+  ep  300 [S2] Hs=2.0 | Reward=   -2.566  ISE=0.02566  best=-0.233  (212.3min)
+  ep  350 [S2] Hs=2.0 | Reward=  -29.859  ISE=0.29859  best=-0.233  (247.7min)
+  ep  400 [S2] Hs=2.0 | Reward= -102.865  ISE=0.02865  best=-0.233  (262.0min)
+  ep  450 [S2] Hs=2.0 | Reward= -101.584  ISE=0.01584  best=-0.233  (262.8min)
+  ep  500 [S2] Hs=2.0 | Reward= -101.391  ISE=0.01391  best=-0.233  (263.4min)
+  ep  550 [S2] Hs=2.0 | Reward= -101.505  ISE=0.01505  best=-0.233  (263.8min)
+  ep  600 [S2] Hs=2.0 | Reward= -101.339  ISE=0.01339  best=-0.233  (264.1min)
+  ep  650 [S2] Hs=2.0 | Reward= -101.290  ISE=0.01290  best=-0.233  (264.3min)
+  ep  700 [S2] Hs=2.0 | Reward= -101.190  ISE=0.01190  best=-0.233  (264.5min)
+  ep  750 [S2] Hs=2.0 | Reward= -101.448  ISE=0.01448  best=-0.233  (264.7min)
+
+────────────────────────────────────────────────────────────
+  ▶ 进入 Stage 3  (Hs∈(1.5, 3.5), sinusoidal)
+────────────────────────────────────────────────────────────
+  ep  800 [S3] Hs=2.0 | Reward= -101.376  ISE=0.01376  best=-0.233  (265.0min)
+  ep  850 [S3] Hs=1.9 | Reward= -101.663  ISE=0.01663  best=-0.233  (265.2min)
+  ep  900 [S3] Hs=2.8 | Reward= -101.158  ISE=0.01158  best=-0.233  (265.4min)
+  ep  950 [S3] Hs=2.6 | Reward= -101.288  ISE=0.01288  best=-0.233  (265.7min)
+  ep 1000 [S3] Hs=3.4 | Reward= -101.326  ISE=0.01326  best=-0.233  (265.9min)
+  ep 1050 [S3] Hs=2.0 | Reward= -101.290  ISE=0.01290  best=-0.233  (266.1min)
+  ep 1100 [S3] Hs=1.9 | Reward= -101.464  ISE=0.01464  best=-0.233  (266.3min)
+  ep 1150 [S3] Hs=2.5 | Reward= -101.424  ISE=0.01424  best=-0.233  (266.5min)
+  ep 1200 [S3] Hs=2.4 | Reward= -101.521  ISE=0.01521  best=-0.233  (266.8min)
+  ep 1250 [S3] Hs=2.8 | Reward= -101.363  ISE=0.01363  best=-0.233  (267.0min)
+  ep 1300 [S3] Hs=1.7 | Reward= -101.357  ISE=0.01357  best=-0.233  (267.2min)
+  ep 1350 [S3] Hs=3.0 | Reward= -101.497  ISE=0.01497  best=-0.233  (267.4min)
+  ep 1400 [S3] Hs=2.0 | Reward= -101.516  ISE=0.01516  best=-0.233  (267.6min)
+  ep 1450 [S3] Hs=3.2 | Reward= -101.366  ISE=0.01366  best=-0.233  (267.8min)
+
+======================================================================
+训练完成!  最佳 Reward=-0.233 @ ep101
+总时长: 268.0 分钟
+模型保存: /home/haydn/Documents/AERAOFMINE/mythesis/simulation/chapter4/experiments/chapter4_models_v2

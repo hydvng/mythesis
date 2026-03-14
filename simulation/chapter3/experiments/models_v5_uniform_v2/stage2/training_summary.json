@@ -1,0 +1,20 @@
+{
+  "stage_name": "Stage2_V51Uniform",
+  "config": {
+    "name": "Stage2_V51Uniform_Tracking",
+    "episode_length": 20,
+    "dt": 0.01,
+    "max_episodes": 250,
+    "Hs": 2.0,
+    "T1": 8.0,
+    "q_des_type": "sinusoidal",
+    "enable_burst_step": false,
+    "save_dir": "models_v5_uniform_v2/stage2"
+  },
+  "best_reward": -1.0805450112678243,
+  "best_ise": 0.001531183910862791,
+  "best_episode": 209,
+  "final_avg_reward": -1.394246370583085,
+  "final_avg_ise": 0.002784894027812867,
+  "training_time_sec": 3921.599592924118
+}

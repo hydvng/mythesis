@@ -1,0 +1,76 @@
+{
+  "variant": "V5_1_Uniform_Curriculum",
+  "started_at": "2026-03-12T22:22:23.903051",
+  "device": "cuda",
+  "stages": [
+    {
+      "stage_name": "Stage1_V51Uniform",
+      "config": {
+        "name": "Stage1_V51Uniform_Basic",
+        "episode_length": 10,
+        "dt": 0.01,
+        "max_episodes": 150,
+        "Hs": 1.0,
+        "T1": 8.0,
+        "q_des_type": "constant",
+        "enable_burst_step": false,
+        "save_dir": "models_v5_uniform_v2/stage1"
+      },
+      "best_reward": -0.641007687286971,
+      "best_ise": 0.0008960818783074469,
+      "best_episode": 141,
+      "final_avg_reward": -3.2348508234941136,
+      "final_avg_ise": 0.022682787595464455,
+      "training_time_sec": 1135.3112998008728
+    },
+    {
+      "stage_name": "Stage2_V51Uniform",
+      "config": {
+        "name": "Stage2_V51Uniform_Tracking",
+        "episode_length": 20,
+        "dt": 0.01,
+        "max_episodes": 250,
+        "Hs": 2.0,
+        "T1": 8.0,
+        "q_des_type": "sinusoidal",
+        "enable_burst_step": false,
+        "save_dir": "models_v5_uniform_v2/stage2"
+      },
+      "best_reward": -1.0805450112678243,
+      "best_ise": 0.001531183910862791,
+      "best_episode": 209,
+      "final_avg_reward": -1.394246370583085,
+      "final_avg_ise": 0.002784894027812867,
+      "training_time_sec": 3921.599592924118
+    },
+    {
+      "stage_name": "Stage3_V51Uniform",
+      "config": {
+        "name": "Stage3_V51Uniform_FullTask",
+        "episode_length": 30,
+        "dt": 0.01,
+        "max_episodes": 400,
+        "Hs": 2.0,
+        "T1": 8.0,
+        "q_des_type": "sinusoidal",
+        "enable_burst_step": false,
+        "step_t0": 15.0,
+        "step_duration": 0.3,
+        "step_amplitude": [
+          3000.0,
+          150.0,
+          150.0
+        ],
+        "step_ramp_time": 0.03,
+        "save_dir": "models_v5_uniform_v2/stage3"
+      },
+      "best_reward": -1.2296550821612886,
+      "best_ise": 0.0010644016809554493,
+      "best_episode": 312,
+      "final_avg_reward": -1.5116344387414977,
+      "final_avg_ise": 0.002350971138901493,
+      "training_time_sec": 9333.577479839325
+    }
+  ],
+  "finished_at": "2026-03-13T02:22:14.442100"
+}

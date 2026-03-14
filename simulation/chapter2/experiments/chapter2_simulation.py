@@ -28,6 +28,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 from uniform_rod_platform_dynamics import UniformRodPlatform3DOF
 from wave_disturbance import WaveDisturbance
+from uav_landing_disturbance import UavLandingParams, generate_uav_landing_tau
 
 plt.rcParams['font.sans-serif'] = ['DejaVu Sans']
 plt.rcParams['axes.unicode_minus'] = False
@@ -884,6 +885,81 @@ class Chapter2Simulation:
         self.figures.append('fig2_10_platform_parameters.png')
         print("Generated: fig2_10_platform_parameters.png")
         plt.close()
+
+    def plot_figure_2_11_uav_wave_disturbance_comparison(self):
+        """图2-11: UAV扰动、海浪扰动与复合扰动对比"""
+        t = np.linspace(0, 30, 3000)
+
+        # Wave disturbance (same chapter-2 sea-state style)
+        wave = WaveDisturbance(
+            Hs=2.0,
+            T1=8.0,
+            vessel_file='supply.mat',
+            wave_heading=180.0,
+            use_directional_spectrum=True,
+            n_directions=9,
+            spreading_exponent=2,
+            random_seed=42,
+        )
+        tau_wave = wave.generate_disturbance(t)
+
+        # UAV landing disturbance: static load + impact, with a small eccentricity
+        uav_params = UavLandingParams(
+            m_uav=150.0,
+            g=9.81,
+            t0=12.0,
+            ramp=0.3,
+            duration=None,          # landed and stays on deck
+            impulse_Iz=120.0,       # moderate touchdown impulse (N·s)
+            impulse_duration=0.15,
+            r_x=0.05,
+            r_y=0.0,
+            radius_limit=0.3,
+            random_seed=42,
+        )
+        tau_uav, meta = generate_uav_landing_tau(t, params=uav_params)
+
+        tau_total = tau_wave + tau_uav
+
+        fig, axes = plt.subplots(3, 1, figsize=(12, 9), sharex=True)
+        labels = ['Fz (N)', 'M_alpha (N·m)', 'M_beta (N·m)']
+        titles = ['Heave Disturbance', 'Roll Disturbance', 'Pitch Disturbance']
+
+        for i, ax in enumerate(axes):
+            ax.plot(t, tau_uav[:, i], label='UAV only', linewidth=2, color='tab:orange')
+            ax.plot(t, tau_wave[:, i], label='Wave only', linewidth=1.5, color='tab:blue')
+            ax.plot(t, tau_total[:, i], label='Wave + UAV', linewidth=2, color='tab:green')
+            ax.axvline(uav_params.t0, color='k', linestyle='--', alpha=0.5)
+            ax.set_ylabel(labels[i])
+            ax.set_title(titles[i])
+            ax.grid(True, alpha=0.3)
+            ax.legend(loc='upper right')
+
+        axes[-1].set_xlabel('Time (s)')
+
+        fig.suptitle(
+            'Chapter 2 Disturbance Modeling: UAV Landing, Wave, and Combined Disturbance',
+            fontsize=14,
+            fontweight='bold'
+        )
+
+        info_text = (
+            f"m_uav={meta['m_uav']:.0f} kg, t0={meta['t0']:.1f} s, "
+            f"r=({meta['r_x']:.2f}, {meta['r_y']:.2f}) m, impulse={meta['impulse_Iz']:.1f} N·s"
+        )
+        axes[0].text(
+            0.02, 0.95, info_text,
+            transform=axes[0].transAxes,
+            va='top', ha='left', fontsize=9,
+            bbox=dict(boxstyle='round', facecolor='white', alpha=0.85, edgecolor='0.7')
+        )
+
+        plt.tight_layout(rect=[0, 0, 1, 0.96])
+        plt.savefig(os.path.join(self.figures_dir, 'fig2_11_uav_wave_disturbance.png'),
+                    dpi=300, bbox_inches='tight')
+        self.figures.append('fig2_11_uav_wave_disturbance.png')
+        print("Generated: fig2_11_uav_wave_disturbance.png")
+        plt.close()
         
     def run_all_simulations(self):
         """运行所有仿真"""
@@ -901,6 +977,7 @@ class Chapter2Simulation:
         self.plot_figure_2_8_workspace_3d()
         self.plot_figure_2_9_gravity_friction()
         self.plot_figure_2_10_platform_parameters()
+        self.plot_figure_2_11_uav_wave_disturbance_comparison()
         
         print("\n" + "="*70)
         print(f"All simulations completed! Generated {len(self.figures)} figures")

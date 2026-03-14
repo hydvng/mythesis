@@ -56,6 +56,9 @@ class WaveDisturbance:
         7: {"Hs": 5.5,  "T1": 12.5, "description": "Phenomenal"},
     }
 
+    # Avoid repeatedly printing the same vessel metadata during training/reset.
+    _printed_vessel_info = set()
+
     # MSS DOF ordering (motionRAO amp index):
     #   0=Surge, 1=Sway, 2=Heave, 3=Roll, 4=Pitch, 5=Yaw
     DOF_NAMES_6 = ("surge", "sway", "heave", "roll", "pitch", "yaw")
@@ -243,10 +246,13 @@ class WaveDisturbance:
                 fill_value=0.0
             )
         
-        print(f"已加载船型: {self.ship_params['name']}")
-        print(f"  Lpp={self.ship_params['Lpp']:.1f}m, "
-              f"B={self.ship_params['B']:.1f}m, "
-              f"T={self.ship_params['T']:.1f}m")
+        vessel_print_key = os.path.abspath(filepath)
+        if vessel_print_key not in self._printed_vessel_info:
+            print(f"已加载船型: {self.ship_params['name']}")
+            print(f"  Lpp={self.ship_params['Lpp']:.1f}m, "
+                  f"B={self.ship_params['B']:.1f}m, "
+                  f"T={self.ship_params['T']:.1f}m")
+            self._printed_vessel_info.add(vessel_print_key)
     
     def _precompute(self):
         """预计算频率和方向相关参数"""

@@ -13,8 +13,15 @@ Chapter 4: V5 + ESO + 硬切换 DRARL
 
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'common'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '.'))
+_ENV_DIR  = os.path.dirname(os.path.abspath(__file__))
+_SIM_ROOT = os.path.abspath(os.path.join(_ENV_DIR, '..', '..'))
+for _p in [
+    os.path.join(_SIM_ROOT, 'common'),
+    os.path.join(_SIM_ROOT, 'disturbance'),
+    _ENV_DIR,
+]:
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 import numpy as np
 import gym
@@ -122,20 +129,21 @@ class PlatformRLEnvChapter4(gym.Env):
                 threshold=switch_threshold,
                 beta=switch_beta,
                 kp=24.0,
-                kd=2.5,
-                center_ratio=0.5,
+                kd=8.0,             # 提高边界区阻尼，抑制末尾振荡
+                center_ratio=0.6,   # 扩大RL自由区至漏斗60%
             )
-            # 漏斗型安全区域：每个维度都有自己的 funnel（upper/lower 两条性能函数）
-            # 目前按“对称漏斗”的安全边界处理：ρ_i(t)=min(ρ_upper_i(t), ρ_lower_i(t))
+            # 漏斗参数：rho_inf=0.20 确保稳态边界宽于实际跟踪误差幅度
+            # rho(t) = (2.0 - 0.20)*exp(-0.25*t) + 0.20
+            # t=10s: rho≈0.42，t=20s: rho≈0.27，t=30s: rho≈0.23，稳态 0.20
             self.perf_funcs_upper = {
-                'z': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
-                'alpha': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
-                'beta': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
+                'z':     PerformanceFunction(rho_0=2.0, rho_inf=0.20, kappa=0.25),
+                'alpha': PerformanceFunction(rho_0=2.0, rho_inf=0.20, kappa=0.25),
+                'beta':  PerformanceFunction(rho_0=2.0, rho_inf=0.20, kappa=0.25),
             }
             self.perf_funcs_lower = {
-                'z': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
-                'alpha': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
-                'beta': PerformanceFunction(rho_0=2.0, rho_inf=0.05, kappa=0.5),
+                'z':     PerformanceFunction(rho_0=2.0, rho_inf=0.20, kappa=0.25),
+                'alpha': PerformanceFunction(rho_0=2.0, rho_inf=0.20, kappa=0.25),
+                'beta':  PerformanceFunction(rho_0=2.0, rho_inf=0.20, kappa=0.25),
             }
         
         # 状态变量

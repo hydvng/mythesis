@@ -32,8 +32,15 @@
 
 - `simulation/common` 中的平台运动学/动力学模型
 - `simulation/disturbance` 中的波浪扰动模型 `WaveDisturbance`
+- `simulation/disturbance` 中的 UAV 降落扰动模型 `uav_landing_disturbance.py`
 
 图输出目录：`simulation/chapter2/figures/`
+
+其中第2章现已包含一张复合扰动建模对比图，用于展示：
+
+- UAV only
+- Wave only
+- Wave + UAV
 
 ## 说明
 

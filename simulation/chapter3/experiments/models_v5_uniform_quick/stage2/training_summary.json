@@ -1,0 +1,20 @@
+{
+  "stage_name": "Stage2_V5Uniform_Quick",
+  "config": {
+    "name": "Stage2_V5Uniform_Quick",
+    "episode_length": 2,
+    "dt": 0.01,
+    "max_episodes": 2,
+    "Hs": 2.0,
+    "T1": 8.0,
+    "q_des_type": "sinusoidal_small",
+    "enable_burst_step": false,
+    "save_dir": "models_v5_uniform_quick/stage2"
+  },
+  "best_reward": -1.6748249165293174,
+  "best_ise": 0.016748249165293175,
+  "best_episode": 1,
+  "final_avg_reward": -1.9109298677863071,
+  "final_avg_ise": 0.01910929867786307,
+  "training_time_sec": 2.5612235069274902
+}

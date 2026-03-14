@@ -1,0 +1,28 @@
+{
+  "stage_name": "Stage3_V51Uniform",
+  "config": {
+    "name": "Stage3_V51Uniform_FullTask",
+    "episode_length": 30,
+    "dt": 0.01,
+    "max_episodes": 400,
+    "Hs": 2.0,
+    "T1": 8.0,
+    "q_des_type": "sinusoidal",
+    "enable_burst_step": false,
+    "step_t0": 15.0,
+    "step_duration": 0.3,
+    "step_amplitude": [
+      3000.0,
+      150.0,
+      150.0
+    ],
+    "step_ramp_time": 0.03,
+    "save_dir": "models_v5_uniform_v2/stage3"
+  },
+  "best_reward": -1.2296550821612886,
+  "best_ise": 0.0010644016809554493,
+  "best_episode": 312,
+  "final_avg_reward": -1.5116344387414977,
+  "final_avg_ise": 0.002350971138901493,
+  "training_time_sec": 9333.577479839325
+}

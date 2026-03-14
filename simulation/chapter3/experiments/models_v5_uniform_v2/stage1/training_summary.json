@@ -1,0 +1,20 @@
+{
+  "stage_name": "Stage1_V51Uniform",
+  "config": {
+    "name": "Stage1_V51Uniform_Basic",
+    "episode_length": 10,
+    "dt": 0.01,
+    "max_episodes": 150,
+    "Hs": 1.0,
+    "T1": 8.0,
+    "q_des_type": "constant",
+    "enable_burst_step": false,
+    "save_dir": "models_v5_uniform_v2/stage1"
+  },
+  "best_reward": -0.641007687286971,
+  "best_ise": 0.0008960818783074469,
+  "best_episode": 141,
+  "final_avg_reward": -3.2348508234941136,
+  "final_avg_ise": 0.022682787595464455,
+  "training_time_sec": 1135.3112998008728
+}
